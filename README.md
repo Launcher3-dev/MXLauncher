@@ -17,22 +17,22 @@
 
 ## 功能规划
 
-| 功能       | 是否完成 | 备注                             |
-| ---------- | -------- | -------------------------------- |
-| 双层改单层 | 完成     |                                  |
-| 循环滑动   | 完成     |                                  |
-| 滑动特效   | 完成     |                                  |
-| 负一屏     | 完成     |                                  |
-| 主菜单     | 未完成   |                                  |
-| 插件菜单   | 未完成   |                                  |
-| 特效菜单   | 未完成   |                                  |
-| 特效调优   | 未完成   |                                  |
-| 切换主题   | 未完成   |                                  |
-| 切换壁纸   | 未完成   |                                  |
-| 点击卸载   | 完成     | 该功能放在了长按图标显示的弹窗中 |
-| 悬浮窗菜单 | 未完成   |                                  |
-| 搜索       | 未完成   |                                  |
-| 最近应用   | 未完成   |                                  |
+| 功能       | 是否完成 | 备注 |
+| ---------- | -------- | ---- |
+| 双层改单层 | 未完成   |      |
+| 循环滑动   | 未完成   |      |
+| 滑动特效   | 未完成   |      |
+| 负一屏     | 未完成   |      |
+| 主菜单     | 未完成   |      |
+| 插件菜单   | 未完成   |      |
+| 特效菜单   | 未完成   |      |
+| 特效调优   | 未完成   |      |
+| 切换主题   | 未完成   |      |
+| 切换壁纸   | 未完成   |      |
+| 点击卸载   | 未完成   |      |
+| 悬浮窗菜单 | 未完成   |      |
+| 搜索       | 未完成   |      |
+| 最近应用   | 未完成   |      |
 
 ## 源码参考
 https://cs.android.com/android/platform/superproject/+/master:packages/apps/Launcher3/
@@ -65,4 +65,4 @@ https://cs.android.com/android/platform/superproject/+/master:packages/apps/Laun
 <img width="320" src="./image/launcher03.png"/>    <img width="320" src="./image/launcher04.png"/>
 <img width="320" src="./image/launcher05.png"/>    <img width="320" src="./image/launcher06.png"/>
 <img width="320" src="./image/launcher07.png"/>    <img width="320" src="./image/launcher08.png"/>
-<img width="320" src="./image/launcher09.png"/>    <img width="320" src="./image/launcher10.png"/>
+<img width="320" src="./image/launcher09.png"/>    <img width="320" src="./image/launcher10.png"/><img width="320" src="./image/launcher11.png"/>

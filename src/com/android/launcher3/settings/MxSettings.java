@@ -1,10 +1,10 @@
-package com.android.launcher3.setting;
+package com.android.launcher3.settings;
 
 import android.content.Context;
 
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.effect.TransitionEffect;
-import com.android.launcher3.util.LauncherSpUtil;
+import com.android.mxlibrary.util.LauncherSpUtil;
 
 public final class MxSettings {
 

@@ -186,4 +186,7 @@
     <dimen name="swipe_back_window_scale_x_margin">10dp</dimen>
     <dimen name="swipe_back_window_max_delta_y">160dp</dimen>
     <dimen name="swipe_back_window_corner_radius">40dp</dimen>
+
+    <!-- Out of 100, the percent to shrink the workspace during overview mode. -->
+    <integer name="config_workspaceOverviewShrinkPercentage">85</integer>
 </resources>

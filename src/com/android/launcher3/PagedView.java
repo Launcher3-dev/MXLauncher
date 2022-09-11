@@ -77,16 +77,16 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     public static final boolean DEBUG_FAILED_QUICKSWITCH = false;
 
     public static final int ACTION_MOVE_ALLOW_EASY_FLING = MotionEvent.ACTION_MASK - 1;
-    public static final int INVALID_PAGE = -1;
+    public static final int INVALID_PAGE = -2;// 原始为-1
     protected static final ComputePageScrollsLogic SIMPLE_SCROLL_LOGIC = (v) -> v.getVisibility() != GONE;
 
     private static final float RETURN_TO_ORIGINAL_PAGE_THRESHOLD = 0.33f;
     // The page is moved more than halfway, automatically move to the next page on touch up.
     private static final float SIGNIFICANT_MOVE_THRESHOLD = 0.4f;
 
-    private static final float MAX_SCROLL_PROGRESS = 1.0f;
+    protected static final float MAX_SCROLL_PROGRESS = 1.0f;
 
-    private boolean mFreeScroll = false;
+    protected boolean mFreeScroll = false;
 
     private int mFlingThresholdVelocity;
     private int mEasyFlingThresholdVelocity;
@@ -281,7 +281,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         pageEndTransition();
     }
 
-    private int validateNewPage(int newPage) {
+    protected int validateNewPage(int newPage) {
         newPage = ensureWithinScrollBounds(newPage);
         // Ensure that it is clamped by the actual set of children in all cases
         newPage = Utilities.boundToRange(newPage, 0, getPageCount() - 1);
@@ -1162,7 +1162,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         forEachVisiblePage(View::cancelLongPress);
     }
 
-    protected float getScrollProgress(int screenCenter, View v, int page) {
+    public float getScrollProgress(int screenCenter, View v, int page) {
         final int halfScreenSize = getMeasuredWidth() / 2;
         int delta = screenCenter - (getScrollForPage(page) + halfScreenSize);
         int panelCount = getPanelCount();
@@ -1946,4 +1946,12 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
             }
         }
     }
+
+    // begin-code.cn add 20220911--start
+    protected int validateCircularNewPage() {
+        return validateNewPage(mNextPage);
+    }
+
+    // begin-code.cn add 20220911--end
+
 }

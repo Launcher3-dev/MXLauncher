@@ -7,9 +7,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
 import com.android.launcher3.CellLayout;
+import com.android.launcher3.CircularSlidePagedView;
+import com.android.launcher3.Hotseat;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
-import com.android.launcher3.PagedView;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.Workspace;
@@ -62,7 +63,7 @@ public class TransitionEffect {
 
     public TransitionEffect(Launcher launcher) {
         this.mLauncher = launcher;
-        mCameraDistance = PagedView.mDensity * CAMERA_DISTANCE;
+        mCameraDistance = CircularSlidePagedView.mDensity * CAMERA_DISTANCE;
         mOverviewModeShrinkFactor = launcher.getResources().getInteger(R.integer.config_workspaceOverviewShrinkPercentage) / 100f;
     }
 
@@ -378,11 +379,11 @@ public class TransitionEffect {
                 //Flip特效反向切换桌面时出现蒙版
                 Folder openFolder = mLauncher.getWorkspace().getOpenFolder();
                 if (openFolder == null) {
-                    mLauncher.changeBackgroundAlpha(1.0f);
+                    changeBackgroundAlpha(1.0f);
                 }
             }
             if (scrollProgress >= -0.5f && scrollProgress <= 0.5f) {
-                v.setCameraDistance(PagedView.mDensity * mCameraDistance);
+                v.setCameraDistance(CircularSlidePagedView.mDensity * mCameraDistance);
                 v.setTranslationX(v.getMeasuredWidth() * scrollProgress);
                 v.setPivotX(v.getMeasuredWidth() * 0.5f);
                 v.setRotationY(rotation);
@@ -407,6 +408,23 @@ public class TransitionEffect {
 //                v.setTranslationX(0f);
 //            }
         }
+    }
+
+    public void changeBackgroundAlpha(float alpha) {
+        View currentPage = null;
+        if (mWorkspace != null) {
+            currentPage = mWorkspace.getPageAt(mWorkspace.getCurrentPage());
+            if (currentPage != null) {
+                currentPage.setAlpha(alpha);
+            }
+        }
+        Hotseat hotseat = mWorkspace.getHotseat();
+        if (hotseat != null) {
+            hotseat.setAlpha(alpha);
+        }
+//        if (mPageIndicators != null) {
+//            mPageIndicators.setAlpha(alpha);
+//        }
     }
 
     /**
