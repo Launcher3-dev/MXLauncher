@@ -371,4 +371,31 @@ public final class FeatureFlags {
                 ? new DebugFlag(key, defaultValue, description)
                 : new BooleanFlag(key, defaultValue);
     }
+
+    // add by codemx.cn----20220911----start
+    // 是否循环滑动
+    public static final boolean LAUNCHER3_CIRCLE_SCROLL = true;
+
+    // 是否开启负一屏，当LAUNCHER_OVERLAY_ENABLED = false才起作用
+    public static final boolean CUSTOM_CONTENT_ENABLED = true;
+
+    // 是否开启跨进程的负一屏，如果开启，则不会开启CustomContent负一屏
+    public static final boolean LAUNCHER_OVERLAY_ENABLED = false;
+
+    // add by codemx.cn ---- 20200710 ---- start
+    // 绑定完成后是否滑动到最后一页
+    public static final boolean SCROLL_TO_LAST_PAGE_WHEN_BIND_FINISH = false;
+
+    // 是否显示hotseat中应用名字
+    public static final boolean LAUNCHER_HOTSEAT_TITLE_ENABLE = true;
+
+    // 是否绘制白色背景
+    public static final boolean LAUNCHER_DRAW_WITHE_BG = false;
+
+    // 是否加载系统默认的配置图标位置
+    public static final boolean LAUNCHER_LOAD_SYSTEM_CONFIG = false;
+
+    // 是否显示主屏幕设置菜单
+    public static final boolean LAUNCHER_ENABLE_SETTING = false;
+    // add by codemx.cn----20220911----end
 }

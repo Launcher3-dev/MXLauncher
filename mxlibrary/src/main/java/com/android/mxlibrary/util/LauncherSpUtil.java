@@ -1,4 +1,4 @@
-package com.android.launcher3.util;
+package com.android.mxlibrary.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

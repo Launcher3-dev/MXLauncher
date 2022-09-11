@@ -1,20 +1,11 @@
-package com.android.launcher3.setting;
+package com.android.launcher3.settings;
 
 import android.content.Context;
 
 import com.android.launcher3.config.FeatureFlags;
-import com.android.launcher3.effect.TransitionEffect;
-import com.android.launcher3.util.LauncherSpUtil;
+import com.android.mxlibrary.util.LauncherSpUtil;
 
 public final class MxSettings {
-
-
-    // 特效标记
-    public static int sLauncherEffect = TransitionEffect.TRANSITION_EFFECT_NONE;
-//    public static int sLauncherEffect = 3;
-
-    // 是否显示卸载按钮标记
-    public static boolean sShowUnInstallIcon = true;
 
     /**
      * PagedView can scroll circle-endless.
@@ -33,7 +24,6 @@ public final class MxSettings {
 
     public void loadSettings(Context context) {
         mContext = context.getApplicationContext();
-//        sLauncherEffect = LauncherSpUtil.getIntData(mContext, LauncherSpUtil.KEY_SCROLL_EFFECT, TransitionEffect.TRANSITION_EFFECT_NONE);
         loadScreenCycle();
     }
 
@@ -48,11 +38,6 @@ public final class MxSettings {
 
     public boolean isPageViewCircleScroll() {
         return isPagedViewCircleScroll;
-    }
-
-    public void setLauncherEffect(int effect) {
-        sLauncherEffect = effect;
-        LauncherSpUtil.saveIntData(mContext, LauncherSpUtil.KEY_SCROLL_EFFECT, effect);
     }
 
 }

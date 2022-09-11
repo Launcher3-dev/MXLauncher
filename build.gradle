@@ -155,6 +155,7 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:${ANDROID_X_VERSION}"
     implementation "androidx.preference:preference:${ANDROID_X_VERSION}"
     implementation project(':IconLoader')
+    implementation project(':mxlibrary')
     implementation 'androidx.slice:slice-core:1.0.0'
 
     implementation 'com.google.protobuf:protobuf-javalite:3.8.0'
