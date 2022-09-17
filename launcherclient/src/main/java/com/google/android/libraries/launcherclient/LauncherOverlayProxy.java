@@ -18,9 +18,9 @@ public final class LauncherOverlayProxy extends BaseProxy implements ILauncherOv
         transact(1, obtain());
     }
 
-    public final void onScroll(float f) throws RemoteException {
+    public final void onScroll(float progress) throws RemoteException {
         Parcel a = obtain();
-        a.writeFloat(f);
+        a.writeFloat(progress);
         transact(2, a);
     }
 

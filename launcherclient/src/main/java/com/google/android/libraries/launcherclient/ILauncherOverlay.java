@@ -6,7 +6,7 @@ import android.os.RemoteException;
 import android.view.WindowManager;
 
 public interface ILauncherOverlay extends IInterface {
-    void onScroll(float f) throws RemoteException;
+    void onScroll(float progress) throws RemoteException;
 
     void closeOverlay(int i) throws RemoteException;
 

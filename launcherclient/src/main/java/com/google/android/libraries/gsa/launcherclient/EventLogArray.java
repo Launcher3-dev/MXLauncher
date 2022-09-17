@@ -18,23 +18,23 @@ final class EventLogArray {
         this.logInfos = new LogInfo[i];
     }
 
-    public void mo63a(String str) {
-        m76a(0, str, 0.0f);
+    public void print(String str) {
+        print(0, str, 0.0f);
     }
 
-    public void mo65a(String str, int i) {
-        m76a(2, str, (float) i);
+    public void print(String str, int i) {
+        print(2, str, (float) i);
     }
 
-    public void mo64a(String str, float f) {
-        m76a(1, str, f);
+    public void print(String str, float f) {
+        print(1, str, f);
     }
 
-    public void mo67a(String str, boolean z) {
-        m76a(z ? 3 : 4, str, 0.0f);
+    public void print(String str, boolean z) {
+        print(z ? 3 : 4, str, 0.0f);
     }
 
-    private void m76a(int i, String str, float f) {
+    private void print(int i, String str, float f) {
         int length = ((this.f36c + this.logInfos.length) - 1) % this.logInfos.length;
         int length2 = ((this.f36c + this.logInfos.length) - 2) % this.logInfos.length;
         if (!m77a(this.logInfos[length], i, str) || !m77a(this.logInfos[length2], i, str)) {

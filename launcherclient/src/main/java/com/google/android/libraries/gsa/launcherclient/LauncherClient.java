@@ -46,22 +46,22 @@ public class LauncherClient {
     public static class ClientOptions {
         public final int f19a;
 
-        public ClientOptions(boolean z, boolean z2, boolean z3) {
+        public ClientOptions(boolean enableMinusOne, boolean enableHotword, boolean enablePrewarming) {
             int i;
             int i2;
             int i3 = 0;
-            if (z) {
+            if (enableMinusOne) {
                 i = 1;
             } else {
                 i = 0;
             }
             int i4 = i | 0;
-            if (z2) {
+            if (enableHotword) {
                 i2 = 2;
             } else {
                 i2 = 0;
             }
-            this.f19a = (z3 ? 4 : i3) | i2 | i4;
+            f19a = (enablePrewarming ? 4 : i3) | i2 | i4;
         }
     }
 
@@ -91,67 +91,67 @@ public class LauncherClient {
         }
 
         public final void setClient(LauncherClient launcherClient) {
-            this.mClient = launcherClient;
-            this.mWindowManager = launcherClient.mActivity.getWindowManager();
+            mClient = launcherClient;
+            mWindowManager = launcherClient.mActivity.getWindowManager();
             Point point = new Point();
-            this.mWindowManager.getDefaultDisplay().getRealSize(point);
-            this.mWindowShift = -Math.max(point.x, point.y);
-            this.mWindow = launcherClient.mActivity.getWindow();
+            mWindowManager.getDefaultDisplay().getRealSize(point);
+            mWindowShift = -Math.max(point.x, point.y);
+            mWindow = launcherClient.mActivity.getWindow();
         }
 
         public final void clear() {
-            this.mClient = null;
-            this.mWindowManager = null;
-            this.mWindow = null;
+            mClient = null;
+            mWindowManager = null;
+            mWindow = null;
         }
 
         public final void overlayScrollChanged(float f) throws RemoteException {
-            this.mUIHandler.removeMessages(2);
-            Message.obtain(this.mUIHandler, 2, f).sendToTarget();
-            if (f > 0.0f && this.mWindowHidden) {
-                this.mWindowHidden = false;
+            mUIHandler.removeMessages(2);
+            Message.obtain(mUIHandler, 2, f).sendToTarget();
+            if (f > 0.0f && mWindowHidden) {
+                mWindowHidden = false;
             }
         }
 
         public final void overlayStatusChanged(int i) {
-            Message.obtain(this.mUIHandler, 4, i, 0).sendToTarget();
+            Message.obtain(mUIHandler, 4, i, 0).sendToTarget();
         }
 
         public final boolean handleMessage(Message message) {
-            if (this.mClient == null) {
+            if (mClient == null) {
                 return true;
             }
             switch (message.what) {
                 case 2:
-                    if ((this.mClient.mServiceStatus & 1) != 0) {
+                    if ((mClient.mServiceStatus & 1) != 0) {
                         float floatValue = (Float) message.obj;
-                        this.mClient.mLauncherClientCallbacks.onOverlayScrollChanged(floatValue);
+                        mClient.mLauncherClientCallbacks.onOverlayScrollChanged(floatValue);
                         if (floatValue <= 0.0f) {
-                            this.mClient.mServiceLog.mo63a("onScroll 0, overlay closed");
+                            mClient.mServiceLog.print("onScroll 0, overlay closed");
                         } else if (floatValue >= 1.0f) {
-                            this.mClient.mServiceLog.mo63a("onScroll 1, overlay opened");
+                            mClient.mServiceLog.print("onScroll 1, overlay opened");
                         } else {
-                            this.mClient.mServiceLog.mo64a("onScroll", floatValue);
+                            mClient.mServiceLog.print("onScroll", floatValue);
                         }
                     }
                     return true;
                 case 3:
-                    WindowManager.LayoutParams attributes = this.mWindow.getAttributes();
+                    WindowManager.LayoutParams attributes = mWindow.getAttributes();
                     if ((Boolean) message.obj) {
-                        attributes.x = this.mWindowShift;
+                        attributes.x = mWindowShift;
                         attributes.flags |= 512;
                     } else {
                         attributes.x = 0;
                         attributes.flags &= -513;
                     }
-                    this.mWindowManager.updateViewLayout(this.mWindow.getDecorView(), attributes);
+                    mWindowManager.updateViewLayout(mWindow.getDecorView(), attributes);
                     return true;
                 case 4:
-                    this.mClient.notifyStatusChanged(message.arg1);
-                    this.mClient.mServiceLog.mo65a("stateChanged", message.arg1);
-                    if (this.mClient.mLauncherClientCallbacks instanceof PrivateCallbacks) {
+                    mClient.notifyStatusChanged(message.arg1);
+                    mClient.mServiceLog.print("stateChanged", message.arg1);
+                    if (mClient.mLauncherClientCallbacks instanceof PrivateCallbacks) {
                         int i = message.arg1;
-                        ((PrivateCallbacks) this.mClient.mLauncherClientCallbacks).mo71a();
+                        ((PrivateCallbacks) mClient.mLauncherClientCallbacks).mo71a();
                     }
                     return true;
                 default:
@@ -161,190 +161,190 @@ public class LauncherClient {
     }
 
     public LauncherClient(Activity activity, LauncherClientCallbacks launcherClientCallbacks, ClientOptions clientOptions) {
-        this.mClientLog = new EventLogArray("Client", 20);
-        this.mServiceLog = new EventLogArray("Service", 10);
-        this.mUpdateReceiver = new UpdateReceiver(this);
-        this.mState = 0;
-        this.mDestroyed = false;
-        this.mServiceStatus = 0;
-        this.mActivity = activity;
-        this.mLauncherClientCallbacks = launcherClientCallbacks;
-        this.mSimpleServiceConnection = new SimpleServiceConnection(activity, 65);
-        this.mServiceConnectionOptions = clientOptions.f19a;
-        this.sApplicationConnection = AppServiceConnection.m69a((Context) activity);
-        this.mOverlay = this.sApplicationConnection.mo58a(this);
+        mClientLog = new EventLogArray("Client", 20);
+        mServiceLog = new EventLogArray("Service", 10);
+        mUpdateReceiver = new UpdateReceiver(this);
+        mState = 0;
+        mDestroyed = false;
+        mServiceStatus = 0;
+        mActivity = activity;
+        mLauncherClientCallbacks = launcherClientCallbacks;
+        mSimpleServiceConnection = new SimpleServiceConnection(activity, 65);
+        mServiceConnectionOptions = clientOptions.f19a;
+        sApplicationConnection = AppServiceConnection.getInstance(activity);
+        mOverlay = sApplicationConnection.registerLauncherClient(this);
         IntentFilter intentFilter = new IntentFilter("android.intent.action.PACKAGE_ADDED");
         intentFilter.addDataScheme("package");
         if (Build.VERSION.SDK_INT >= 19) {
             intentFilter.addDataSchemeSpecificPart(Constant.GSA_PACKAGE, 0);
         }
-        this.mActivity.registerReceiver(this.mUpdateReceiver, intentFilter);
+        mActivity.registerReceiver(mUpdateReceiver, intentFilter);
         if (sServiceVersion <= 0) {
             loadApiVersion(activity);
         }
         reconnect();
-        if (Build.VERSION.SDK_INT >= 19 && this.mActivity.getWindow() != null
-                && this.mActivity.getWindow().peekDecorView() != null
-                && this.mActivity.getWindow().peekDecorView().isAttachedToWindow()) {
+        if (Build.VERSION.SDK_INT >= 19 && mActivity.getWindow() != null
+                && mActivity.getWindow().peekDecorView() != null
+                && mActivity.getWindow().peekDecorView().isAttachedToWindow()) {
             onAttachedToWindow();
         }
     }
 
     public final void onAttachedToWindow() {
-        if (!this.mDestroyed) {
-            this.mClientLog.mo63a("attachedToWindow");
-            setWindowAttrs(this.mActivity.getWindow().getAttributes());
+        if (!mDestroyed) {
+            mClientLog.print("attachedToWindow");
+            setWindowAttrs(mActivity.getWindow().getAttributes());
         }
     }
 
     public final void onDetachedFromWindow() {
-        if (!this.mDestroyed) {
-            this.mClientLog.mo63a("detachedFromWindow");
+        if (!mDestroyed) {
+            mClientLog.print("detachedFromWindow");
             setWindowAttrs((WindowManager.LayoutParams) null);
         }
     }
 
     public void onResume() {
-        if (!this.mDestroyed) {
-            this.mState |= 2;
-            if (!(this.mOverlay == null || this.mWindowAttrs == null)) {
+        if (!mDestroyed) {
+            mState |= 2;
+            if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
                     if (sServiceVersion < 4) {
-                        this.mOverlay.mo19d();
+                        mOverlay.mo19d();
                     } else {
-                        this.mOverlay.mo15b(this.mState);
+                        mOverlay.mo15b(mState);
                     }
                 } catch (RemoteException e) {
                 }
             }
-            this.mClientLog.mo65a("stateChanged ", this.mState);
+            mClientLog.print("stateChanged ", mState);
         }
     }
 
     public void onPause() {
-        if (!this.mDestroyed) {
-            this.mState &= -3;
-            if (!(this.mOverlay == null || this.mWindowAttrs == null)) {
+        if (!mDestroyed) {
+            mState &= -3;
+            if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
                     if (sServiceVersion < 4) {
-                        this.mOverlay.mo17c();
+                        mOverlay.mo17c();
                     } else {
-                        this.mOverlay.mo15b(this.mState);
+                        mOverlay.mo15b(mState);
                     }
                 } catch (RemoteException e) {
                 }
             }
-            this.mClientLog.mo65a("stateChanged ", this.mState);
+            mClientLog.print("stateChanged ", mState);
         }
     }
 
     public void onStart() {
-        if (!this.mDestroyed) {
-            this.sApplicationConnection.mo60a(false);
+        if (!mDestroyed) {
+            sApplicationConnection.stopService(false);
             reconnect();
-            this.mState |= 1;
-            if (!(this.mOverlay == null || this.mWindowAttrs == null)) {
+            mState |= 1;
+            if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
-                    this.mOverlay.mo15b(this.mState);
+                    mOverlay.mo15b(mState);
                 } catch (RemoteException e) {
                 }
             }
-            this.mClientLog.mo65a("stateChanged ", this.mState);
+            mClientLog.print("stateChanged ", mState);
         }
     }
 
     public void onStop() {
-        if (!this.mDestroyed) {
-            this.sApplicationConnection.mo60a(true);
-            this.mSimpleServiceConnection.unbindService();
-            this.mState &= -2;
-            if (!(this.mOverlay == null || this.mWindowAttrs == null)) {
+        if (!mDestroyed) {
+            sApplicationConnection.stopService(true);
+            mSimpleServiceConnection.unbindService();
+            mState &= -2;
+            if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
-                    this.mOverlay.mo15b(this.mState);
+                    mOverlay.mo15b(mState);
                 } catch (RemoteException e) {
                 }
             }
-            this.mClientLog.mo65a("stateChanged ", this.mState);
+            mClientLog.print("stateChanged ", mState);
         }
     }
 
     public void onDestroy() {
-        m51a(!this.mActivity.isChangingConfigurations());
+        disconnect(!mActivity.isChangingConfigurations());
     }
 
     public void disconnect() {
-        m51a(true);
+        disconnect(true);
     }
 
     public void setClientOptions(ClientOptions clientOptions) {
-        if (clientOptions.f19a != this.mServiceConnectionOptions) {
-            this.mServiceConnectionOptions = clientOptions.f19a;
-            if (this.mWindowAttrs != null) {
+        if (clientOptions.f19a != mServiceConnectionOptions) {
+            mServiceConnectionOptions = clientOptions.f19a;
+            if (mWindowAttrs != null) {
                 applyWindowToken();
             }
-            this.mClientLog.mo65a("setClientOptions ", this.mServiceConnectionOptions);
+            mClientLog.print("setClientOptions ", mServiceConnectionOptions);
         }
     }
 
-    private final void m51a(boolean z) {
-        if (!this.mDestroyed) {
-            this.mActivity.unregisterReceiver(this.mUpdateReceiver);
+    private void disconnect(boolean unbindService) {
+        if (!mDestroyed) {
+            mActivity.unregisterReceiver(mUpdateReceiver);
         }
-        this.mDestroyed = true;
-        this.mSimpleServiceConnection.unbindService();
-        if (this.mCurrentCallbacks != null) {
-            this.mCurrentCallbacks.clear();
-            this.mCurrentCallbacks = null;
+        mDestroyed = true;
+        mSimpleServiceConnection.unbindService();
+        if (mCurrentCallbacks != null) {
+            mCurrentCallbacks.clear();
+            mCurrentCallbacks = null;
         }
-        this.sApplicationConnection.mo59a(this, z);
+        sApplicationConnection.unbindService(this, unbindService);
     }
 
     public void reconnect() {
-        if (!this.mDestroyed) {
-            if (!this.sApplicationConnection.reconnect() || !this.mSimpleServiceConnection.reconnect()) {
-                this.mActivity.runOnUiThread(new NotifyStatusRunnable(this));
+        if (!mDestroyed) {
+            if (!sApplicationConnection.reconnect() || !mSimpleServiceConnection.reconnect()) {
+                mActivity.runOnUiThread(new NotifyStatusRunnable(this));
             }
         }
     }
 
     private final void setWindowAttrs(WindowManager.LayoutParams layoutParams) {
-        if (this.mWindowAttrs != layoutParams) {
-            this.mWindowAttrs = layoutParams;
-            if (this.mWindowAttrs != null) {
+        if (mWindowAttrs != layoutParams) {
+            mWindowAttrs = layoutParams;
+            if (mWindowAttrs != null) {
                 applyWindowToken();
-            } else if (this.mOverlay != null) {
+            } else if (mOverlay != null) {
                 try {
-                    this.mOverlay.windowDetached(this.mActivity.isChangingConfigurations());
+                    mOverlay.windowDetached(mActivity.isChangingConfigurations());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                this.mOverlay = null;
+                mOverlay = null;
             }
         }
     }
 
     private final void applyWindowToken() {
-        if (this.mOverlay != null) {
+        if (mOverlay != null) {
             try {
-                if (this.mCurrentCallbacks == null) {
-                    this.mCurrentCallbacks = new OverlayCallbacks();
+                if (mCurrentCallbacks == null) {
+                    mCurrentCallbacks = new OverlayCallbacks();
                 }
-                this.mCurrentCallbacks.setClient(this);
+                mCurrentCallbacks.setClient(this);
                 if (sServiceVersion < 3) {
-                    this.mOverlay.windowAttached(this.mWindowAttrs, this.mCurrentCallbacks, this.mServiceConnectionOptions);
+                    mOverlay.windowAttached(mWindowAttrs, mCurrentCallbacks, mServiceConnectionOptions);
                 } else {
                     Bundle bundle = new Bundle();
-                    bundle.putParcelable("layout_params", this.mWindowAttrs);
-                    bundle.putParcelable("configuration", this.mActivity.getResources().getConfiguration());
-                    bundle.putInt("client_options", this.mServiceConnectionOptions);
-                    this.mOverlay.windowAttached2(bundle, this.mCurrentCallbacks);
+                    bundle.putParcelable("layout_params", mWindowAttrs);
+                    bundle.putParcelable("configuration", mActivity.getResources().getConfiguration());
+                    bundle.putInt("client_options", mServiceConnectionOptions);
+                    mOverlay.windowAttached2(bundle, mCurrentCallbacks);
                 }
                 if (sServiceVersion >= 4) {
-                    this.mOverlay.mo15b(this.mState);
-                } else if ((this.mState & 2) != 0) {
-                    this.mOverlay.mo19d();
+                    mOverlay.mo15b(mState);
+                } else if ((mState & 2) != 0) {
+                    mOverlay.mo19d();
                 } else {
-                    this.mOverlay.mo17c();
+                    mOverlay.mo17c();
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -353,14 +353,14 @@ public class LauncherClient {
     }
 
     private final boolean isConnected() {
-        return this.mOverlay != null;
+        return mOverlay != null;
     }
 
     public void startMove() {
-        this.mClientLog.mo63a("startMove");
+        mClientLog.print("startMove");
         if (isConnected()) {
             try {
-                this.mOverlay.startScroll();
+                mOverlay.startScroll();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -368,10 +368,10 @@ public class LauncherClient {
     }
 
     public void endMove() {
-        this.mClientLog.mo63a("endMove");
+        mClientLog.print("endMove");
         if (isConnected()) {
             try {
-                this.mOverlay.endScroll();
+                mOverlay.endScroll();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -379,40 +379,40 @@ public class LauncherClient {
     }
 
     public void updateMove(float progressX) {
-        this.mClientLog.mo64a("updateMove", progressX);
+        mClientLog.print("updateMove", progressX);
         if (isConnected()) {
             try {
-                this.mOverlay.onScroll(progressX);
+                mOverlay.onScroll(progressX);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static int m45a(int i) {
-        if (i > 0 && i <= 2047) {
-            return (i << 2) | 1;
+    private static int calculateTime(int duration) {
+        if (duration > 0 && duration <= 2047) {
+            return (duration << 2) | 1;
         }
         throw new IllegalArgumentException("Invalid duration");
     }
 
-    public void hideOverlay(boolean z) {
-        this.mClientLog.mo67a("hideOverlay", z);
-        if (this.mOverlay != null) {
+    public void hideOverlay(boolean animate) {
+        mClientLog.print("hideOverlay", animate);
+        if (mOverlay != null) {
             try {
-                this.mOverlay.closeOverlay(z ? 1 : 0);
+                mOverlay.closeOverlay(animate ? 1 : 0);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void hideOverlay(int i) {
-        int a = m45a(i);
-        this.mClientLog.mo65a("hideOverlay", i);
-        if (this.mOverlay != null) {
+    public void hideOverlay(int duration) {
+        int a = calculateTime(duration);
+        mClientLog.print("hideOverlay", duration);
+        if (mOverlay != null) {
             try {
-                this.mOverlay.closeOverlay(a);
+                mOverlay.closeOverlay(a);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -420,22 +420,22 @@ public class LauncherClient {
     }
 
     public void showOverlay(boolean z) {
-        this.mClientLog.mo67a("showOverlay", z);
-        if (this.mOverlay != null) {
+        mClientLog.print("showOverlay", z);
+        if (mOverlay != null) {
             try {
-                this.mOverlay.openOverlay(z ? 1 : 0);
+                mOverlay.openOverlay(z ? 1 : 0);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void showOverlay(int i) {
-        int a = m45a(i);
-        this.mClientLog.mo65a("showOverlay", i);
-        if (this.mOverlay != null) {
+    public void showOverlay(int duration) {
+        int a = calculateTime(duration);
+        mClientLog.print("showOverlay", duration);
+        if (mOverlay != null) {
             try {
-                this.mOverlay.openOverlay(a);
+                mOverlay.openOverlay(a);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -443,10 +443,10 @@ public class LauncherClient {
     }
 
     public void requestHotwordDetection(boolean z) {
-        this.mClientLog.mo67a("requestHotwordDetection", z);
-        if (this.mOverlay != null) {
+        mClientLog.print("requestHotwordDetection", z);
+        if (mOverlay != null) {
             try {
-                this.mOverlay.requestVoiceDetection(z);
+                mOverlay.requestVoiceDetection(z);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -454,26 +454,26 @@ public class LauncherClient {
     }
 
     public void reattachOverlay() {
-        this.mClientLog.mo63a("reattachOverlay");
-        if (this.mWindowAttrs != null && sServiceVersion >= 7) {
+        mClientLog.print("reattachOverlay");
+        if (mWindowAttrs != null && sServiceVersion >= 7) {
             applyWindowToken();
         }
     }
 
-    public final void mo28a(ILauncherOverlay aVar) {
-        this.mServiceLog.mo67a("Connected", aVar != null);
-        this.mOverlay = aVar;
-        if (this.mOverlay == null) {
+    public final void setLauncherOverlay(ILauncherOverlay overlay) {
+        mServiceLog.print("Connected", overlay != null);
+        mOverlay = overlay;
+        if (mOverlay == null) {
             notifyStatusChanged(0);
-        } else if (this.mWindowAttrs != null) {
+        } else if (mWindowAttrs != null) {
             applyWindowToken();
         }
     }
 
     public final void notifyStatusChanged(int status) {
         boolean z2 = true;
-        if (this.mServiceStatus != status) {
-            this.mServiceStatus = status;
+        if (mServiceStatus != status) {
+            mServiceStatus = status;
             if ((status & 2) == 0) {
                 z2 = false;
             }
@@ -485,15 +485,15 @@ public class LauncherClient {
         printWriter.println(String.valueOf(str).concat("LauncherClient"));
         String concat = String.valueOf(str).concat("  ");
         printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("isConnected: ").append(isConnected()).toString());
-        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("act.isBound: ").append(this.mSimpleServiceConnection.isConnected()).toString());
-        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("app.isBound: ").append(this.sApplicationConnection.isConnected()).toString());
+        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("act.isBound: ").append(mSimpleServiceConnection.isConnected()).toString());
+        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("app.isBound: ").append(sApplicationConnection.isConnected()).toString());
         printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("serviceVersion: ").append(sServiceVersion).toString());
         printWriter.println(new StringBuilder(concat.length() + 17).append(concat).append("clientVersion: 14").toString());
-        printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("mActivityState: ").append(this.mState).toString());
-        printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("mServiceStatus: ").append(this.mServiceStatus).toString());
-        printWriter.println(new StringBuilder(concat.length() + 45).append(concat).append("mCurrentServiceConnectionOptions: ").append(this.mServiceConnectionOptions).toString());
-        this.mClientLog.print(concat, printWriter);
-        this.mServiceLog.print(concat, printWriter);
+        printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("mActivityState: ").append(mState).toString());
+        printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("mServiceStatus: ").append(mServiceStatus).toString());
+        printWriter.println(new StringBuilder(concat.length() + 45).append(concat).append("mCurrentServiceConnectionOptions: ").append(mServiceConnectionOptions).toString());
+        mClientLog.print(concat, printWriter);
+        mServiceLog.print(concat, printWriter);
     }
 
     static Intent getIntent(Context context) {

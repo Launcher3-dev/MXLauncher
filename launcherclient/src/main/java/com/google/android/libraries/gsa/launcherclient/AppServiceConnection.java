@@ -11,74 +11,74 @@ import java.lang.ref.WeakReference;
 
 final class AppServiceConnection extends SimpleServiceConnection {
 
-    private static AppServiceConnection f30a;
+    private static AppServiceConnection serviceConnection;
 
-    private ILauncherOverlay f31b;
+    private ILauncherOverlay launcherOverlay;
 
-    private WeakReference<LauncherClient> f32c;
+    private WeakReference<LauncherClient> weakReference;
 
-    private boolean f33d;
+    private boolean stopService;
 
-    static AppServiceConnection m69a(Context context) {
-        if (f30a == null) {
-            f30a = new AppServiceConnection(context.getApplicationContext());
+    static AppServiceConnection getInstance(Context context) {
+        if (serviceConnection == null) {
+            serviceConnection = new AppServiceConnection(context.getApplicationContext());
         }
-        return f30a;
+        return serviceConnection;
     }
 
     private AppServiceConnection(Context context) {
         super(context, 33);
     }
 
-    public final ILauncherOverlay mo58a(LauncherClient launcherClient) {
-        this.f32c = new WeakReference<>(launcherClient);
-        return this.f31b;
+    public ILauncherOverlay registerLauncherClient(LauncherClient launcherClient) {
+        this.weakReference = new WeakReference<>(launcherClient);
+        return this.launcherOverlay;
     }
 
-    public final void mo60a(boolean z) {
-        this.f33d = z;
-        m71d();
+    public void stopService(boolean stopService) {
+        this.stopService = stopService;
+        resetService();
     }
 
-    public final void mo59a(LauncherClient launcherClient, boolean z) {
-        LauncherClient e = m72e();
+    public void unbindService(LauncherClient launcherClient, boolean unbindService) {
+        LauncherClient e = getLauncherClient();
         if (e != null && e.equals(launcherClient)) {
-            this.f32c = null;
-            if (z) {
+            this.weakReference = null;
+            if (unbindService) {
                 unbindService();
-                if (f30a == this) {
-                    f30a = null;
+                if (serviceConnection == this) {
+                    serviceConnection = null;
                 }
             }
         }
     }
 
-    public final void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        m70a(ILauncherOverlayStub.asInterface(iBinder));
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        setLauncherOverlay(ILauncherOverlayStub.asInterface(iBinder));
     }
 
-    public final void onServiceDisconnected(ComponentName componentName) {
-        m70a(null);
-        m71d();
+    public void onServiceDisconnected(ComponentName componentName) {
+        setLauncherOverlay(null);
+        resetService();
     }
 
-    private final void m71d() {
-        if (this.f33d && this.f31b == null) {
+    private void resetService() {
+        if (this.stopService && this.launcherOverlay == null) {
             unbindService();
         }
     }
 
-    private final void m70a(ILauncherOverlay aVar) {
-        this.f31b = aVar;
-        LauncherClient e = m72e();
-        if (e != null) {
-            e.mo28a(this.f31b);
+    private void setLauncherOverlay(ILauncherOverlay overlay) {
+        launcherOverlay = overlay;
+        LauncherClient client = getLauncherClient();
+        if (client != null) {
+            client.setLauncherOverlay(launcherOverlay);
         }
     }
 
-    private final LauncherClient m72e() {
-        if (this.f32c != null) {
-            return this.f32c.get();
+    private LauncherClient getLauncherClient() {
+        if (weakReference != null) {
+            return weakReference.get();
         }
         return null;
     }

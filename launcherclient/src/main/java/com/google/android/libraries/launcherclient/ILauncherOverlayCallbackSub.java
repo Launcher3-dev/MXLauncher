@@ -10,7 +10,7 @@ public abstract class ILauncherOverlayCallbackSub extends BaseStub implements IL
         super("com.google.android.libraries.launcherclient.ILauncherOverlayCallback");
     }
 
-    public final boolean mo5a(int i, Parcel parcel) throws RemoteException {
+    public final boolean onTransact(int i, Parcel parcel) throws RemoteException {
         switch (i) {
             case 1:
                 overlayScrollChanged(parcel.readFloat());

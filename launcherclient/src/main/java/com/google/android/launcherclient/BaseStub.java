@@ -29,10 +29,10 @@ public class BaseStub extends Binder implements IInterface {
         if (z) {
             return true;
         }
-        return mo5a(i, parcel);
+        return onTransact(i, parcel);
     }
 
-    public boolean mo5a(int i, Parcel parcel) throws RemoteException {
+    public boolean onTransact(int i, Parcel parcel) throws RemoteException {
         return false;
     }
 }

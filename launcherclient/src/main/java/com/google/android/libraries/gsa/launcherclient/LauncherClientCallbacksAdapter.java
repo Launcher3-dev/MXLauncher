@@ -1,9 +1,9 @@
 package com.google.android.libraries.gsa.launcherclient;
 
 public class LauncherClientCallbacksAdapter implements LauncherClientCallbacks {
-    public void onOverlayScrollChanged(float f) {
+    public void onOverlayScrollChanged(float progress) {
     }
 
-    public void onServiceStateChanged(boolean z, boolean z2) {
+    public void onServiceStateChanged(boolean overlayAttached, boolean hotwordActive) {
     }
 }
