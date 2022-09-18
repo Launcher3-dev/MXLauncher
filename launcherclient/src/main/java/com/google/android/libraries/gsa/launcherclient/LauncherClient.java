@@ -105,16 +105,16 @@ public class LauncherClient {
             mWindow = null;
         }
 
-        public final void overlayScrollChanged(float f) throws RemoteException {
+        public final void overlayScrollChanged(float progress) throws RemoteException {
             mUIHandler.removeMessages(2);
-            Message.obtain(mUIHandler, 2, f).sendToTarget();
-            if (f > 0.0f && mWindowHidden) {
+            Message.obtain(mUIHandler, 2, progress).sendToTarget();
+            if (progress > 0.0f && mWindowHidden) {
                 mWindowHidden = false;
             }
         }
 
-        public final void overlayStatusChanged(int i) {
-            Message.obtain(mUIHandler, 4, i, 0).sendToTarget();
+        public final void overlayStatusChanged(int state) {
+            Message.obtain(mUIHandler, 4, state, 0).sendToTarget();
         }
 
         public final boolean handleMessage(Message message) {

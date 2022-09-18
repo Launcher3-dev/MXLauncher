@@ -32,18 +32,18 @@ final class AppServiceConnection extends SimpleServiceConnection {
 
     public ILauncherOverlay registerLauncherClient(LauncherClient launcherClient) {
         this.weakReference = new WeakReference<>(launcherClient);
-        return this.launcherOverlay;
+        return launcherOverlay;
     }
 
     public void stopService(boolean stopService) {
-        this.stopService = stopService;
+        stopService = stopService;
         resetService();
     }
 
     public void unbindService(LauncherClient launcherClient, boolean unbindService) {
         LauncherClient e = getLauncherClient();
         if (e != null && e.equals(launcherClient)) {
-            this.weakReference = null;
+            weakReference = null;
             if (unbindService) {
                 unbindService();
                 if (serviceConnection == this) {
@@ -63,7 +63,7 @@ final class AppServiceConnection extends SimpleServiceConnection {
     }
 
     private void resetService() {
-        if (this.stopService && this.launcherOverlay == null) {
+        if (stopService && launcherOverlay == null) {
             unbindService();
         }
     }

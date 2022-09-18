@@ -26,24 +26,24 @@ class SimpleServiceConnection implements ServiceConnection {
     }
 
     public final void unbindService() {
-        if (this.isConnected) {
-            this.mContext.unbindService(this);
-            this.isConnected = false;
+        if (isConnected) {
+            mContext.unbindService(this);
+            isConnected = false;
         }
     }
 
     public final boolean isConnected() {
-        return this.isConnected;
+        return isConnected;
     }
 
     public final boolean reconnect() {
-        if (!this.isConnected) {
+        if (!isConnected) {
             try {
-                this.isConnected = this.mContext.bindService(LauncherClient.getIntent(this.mContext), this, this.flags);
+                isConnected = mContext.bindService(LauncherClient.getIntent(mContext), this, flags);
             } catch (SecurityException e) {
                 Log.e("LauncherClient", "Unable to connect to overlay service", e);
             }
         }
-        return this.isConnected;
+        return isConnected;
     }
 }
