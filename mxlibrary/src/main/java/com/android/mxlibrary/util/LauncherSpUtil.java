@@ -12,6 +12,7 @@ public final class LauncherSpUtil {
     public static final String KEY_PAGE_CIRCLE = "sp_key_page_circle";// 滑动循环
     public static final String KEY_ALL_APPS_PULL_UP = "sp_key_all_apps_pull_up";// 向上滑动显示所有APP页面
     public static final String KEY_SCROLL_EFFECT = "sp_scroll_effect";// 滑动特效
+    public static final String KEY_DRAWER_ENABLE = "sp_drawer_enable";// 是否显示抽屉
 
 
     public static void saveStringData(Context context, String key, String data) {
@@ -26,6 +27,11 @@ public final class LauncherSpUtil {
         return preferences.getString(key, "");
     }
 
+    public static String getStringDataWithDefault(Context context, String key, String defaultValue) {
+        SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
+        return preferences.getString(key, defaultValue);
+    }
+
     public static void saveBooleanData(Context context, String key, boolean data) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -36,6 +42,11 @@ public final class LauncherSpUtil {
     public static boolean getBooleanData(Context context, String key) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
         return preferences.getBoolean(key, false);
+    }
+
+    public static boolean getBooleanDataWithDefault(Context context, String key, boolean defaultValue) {
+        SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
+        return preferences.getBoolean(key, defaultValue);
     }
 
     public static void saveIntData(Context context, String key, int data) {
@@ -50,7 +61,7 @@ public final class LauncherSpUtil {
         return preferences.getInt(key, 0);
     }
 
-    public static int getIntData(Context context, String key, int defaultValue) {
+    public static int getIntDataWithDefault(Context context, String key, int defaultValue) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
         return preferences.getInt(key, defaultValue);
     }
@@ -64,7 +75,12 @@ public final class LauncherSpUtil {
 
     public static long getLongData(Context context, String key) {
         SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
-        return preferences.getLong(key, 0);
+        return preferences.getLong(key, 0L);
+    }
+
+    public static long getLongDataWithDefault(Context context, String key, long defaultValue) {
+        SharedPreferences preferences = context.getSharedPreferences(KEY_SP, Context.MODE_PRIVATE);
+        return preferences.getLong(key, defaultValue);
     }
 
     public static void saveFloatData(Context context, String key, float data) {

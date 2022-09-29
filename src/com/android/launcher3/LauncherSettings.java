@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.settings.MxSettings;
 
 /**
  * Settings related utilities.
@@ -90,6 +91,7 @@ public class LauncherSettings {
         public static final int ITEM_TYPE_CUSTOM_APPWIDGET = 5;
 
         /**
+         * 长按应用图标，弹出应用相关信息列表，然后长按带有 “=” 的选项拖拽到桌面上，生成的图标就是DeepShortcut
          * The gesture is an application created deep shortcut
          */
         public static final int ITEM_TYPE_DEEP_SHORTCUT = 6;
@@ -130,32 +132,44 @@ public class LauncherSettings {
         public static final String ICON = "icon";
 
         public static final String TABLE_NAME = "favorites";
+        public static final String TABLE_NAME_ALL = "favorites_all";
+
+        public static String getFavoritesTableName() {
+            return MxSettings.getInstance().isDrawerEnable() ? TABLE_NAME : TABLE_NAME_ALL;
+        }
 
         /**
          * Backup table created when the favorites table is modified during grid migration
          */
-        public static final String BACKUP_TABLE_NAME = "favorites_bakup";
+        public static final String BACKUP_TABLE_NAME = "favorites_backup";
+        public static final String BACKUP_TABLE_NAME_ALL = "favorites_all_backup";
 
         /**
          * Backup table created when user hotseat is moved to workspace for hybrid hotseat
          */
         public static final String HYBRID_HOTSEAT_BACKUP_TABLE = "hotseat_restore_backup";
+        public static final String HYBRID_HOTSEAT_BACKUP_TABLE_ALL = "hotseat_restore_all_backup";
 
         /**
          * Temporary table used specifically for grid migrations during wallpaper preview
          */
         public static final String PREVIEW_TABLE_NAME = "favorites_preview";
+        public static final String PREVIEW_TABLE_NAME_ALL = "favorites_all_preview";
 
         /**
          * Temporary table used specifically for multi-db grid migrations
          */
         public static final String TMP_TABLE = "favorites_tmp";
+        public static final String TMP_TABLE_ALL = "favorites_all_tmp";
 
         /**
          * The content:// style URL for "favorites" table
          */
-        public static final Uri CONTENT_URI = Uri.parse("content://"
+        private static final Uri CONTENT_URI = Uri.parse("content://"
                 + LauncherProvider.AUTHORITY + "/" + TABLE_NAME);
+
+        private static final Uri CONTENT_URI_ALL = Uri.parse("content://"
+                + LauncherProvider.AUTHORITY + "/" + TABLE_NAME_ALL);
 
         /**
          * The content:// style URL for "favorites_bakup" table
@@ -163,17 +177,29 @@ public class LauncherSettings {
         public static final Uri BACKUP_CONTENT_URI = Uri.parse("content://"
                 + LauncherProvider.AUTHORITY + "/" + BACKUP_TABLE_NAME);
 
+        public static final Uri BACKUP_CONTENT_URI_ALL = Uri.parse("content://"
+                + LauncherProvider.AUTHORITY + "/" + BACKUP_TABLE_NAME_ALL);
+
         /**
          * The content:// style URL for "favorites_preview" table
          */
         public static final Uri PREVIEW_CONTENT_URI = Uri.parse("content://"
                 + LauncherProvider.AUTHORITY + "/" + PREVIEW_TABLE_NAME);
 
+        public static final Uri PREVIEW_CONTENT_URI_ALL = Uri.parse("content://"
+                + LauncherProvider.AUTHORITY + "/" + PREVIEW_TABLE_NAME_ALL);
+
         /**
          * The content:// style URL for "favorites_tmp" table
          */
         public static final Uri TMP_CONTENT_URI = Uri.parse("content://"
                 + LauncherProvider.AUTHORITY + "/" + TMP_TABLE);
+        public static final Uri TMP_CONTENT_URI_ALL = Uri.parse("content://"
+                + LauncherProvider.AUTHORITY + "/" + TMP_TABLE_ALL);
+
+        public static Uri getContentUri() {
+            return MxSettings.getInstance().isDrawerEnable() ? CONTENT_URI : CONTENT_URI_ALL;
+        }
 
         /**
          * The content:// style URL for a given row, identified by its id.
@@ -184,7 +210,7 @@ public class LauncherSettings {
          */
         public static Uri getContentUri(int id) {
             return Uri.parse("content://" + LauncherProvider.AUTHORITY
-                    + "/" + TABLE_NAME + "/" + id);
+                    + "/" + (MxSettings.getInstance().isDrawerEnable() ? TABLE_NAME : TABLE_NAME_ALL) + "/" + id);
         }
 
         /**
@@ -218,7 +244,7 @@ public class LauncherSettings {
 
         public static final int CONTAINER_UNKNOWN = -1;
 
-        public static final String containerToString(int container) {
+        public static String containerToString(int container) {
             switch (container) {
                 case CONTAINER_DESKTOP: return "desktop";
                 case CONTAINER_HOTSEAT: return "hotseat";
@@ -231,7 +257,7 @@ public class LauncherSettings {
             }
         }
 
-        public static final String itemTypeToString(int type) {
+        public static String itemTypeToString(int type) {
             switch(type) {
                 case ITEM_TYPE_APPLICATION: return "APP";
                 case ITEM_TYPE_SHORTCUT: return "SHORTCUT";
@@ -414,4 +440,5 @@ public class LauncherSettings {
             return cr.call(CONTENT_URI, method, arg, extras);
         }
     }
+
 }

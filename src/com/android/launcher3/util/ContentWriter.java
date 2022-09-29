@@ -118,7 +118,7 @@ public class ContentWriter {
         final String[] mSelectionArgs;
 
         public CommitParams(String where, String[] selectionArgs) {
-            this(LauncherSettings.Favorites.CONTENT_URI, where, selectionArgs);
+            this(LauncherSettings.Favorites.getContentUri(), where, selectionArgs);
         }
 
         private CommitParams(Uri uri, String where, String[] selectionArgs) {

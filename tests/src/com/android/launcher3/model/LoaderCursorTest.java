@@ -96,7 +96,7 @@ public class LoaderCursorTest {
         });
 
         UserManagerState ums = new UserManagerState();
-        mLoaderCursor = new LoaderCursor(mCursor, Favorites.CONTENT_URI, mApp, ums);
+        mLoaderCursor = new LoaderCursor(mCursor, Favorites.getContentUri(), mApp, ums);
         ums.allUsers.put(0, Process.myUserHandle());
     }
 

@@ -16,10 +16,6 @@
 
 package com.android.launcher3;
 
-import static com.android.launcher3.provider.LauncherDbUtils.copyTable;
-import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
-import static com.android.launcher3.provider.LauncherDbUtils.tableExists;
-
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
 import android.appwidget.AppWidgetHost;
@@ -85,6 +81,10 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import static com.android.launcher3.provider.LauncherDbUtils.copyTable;
+import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
+import static com.android.launcher3.provider.LauncherDbUtils.tableExists;
 
 public class LauncherProvider extends ContentProvider {
     private static final String TAG = "LauncherProvider";
@@ -168,7 +168,7 @@ public class LauncherProvider extends ContentProvider {
 
         final DatabaseHelper helper = src.get();
         mOpenHelper = dst.get();
-        copyTable(helper.getReadableDatabase(), Favorites.TABLE_NAME,
+        copyTable(helper.getReadableDatabase(), Favorites.getFavoritesTableName(),
                 mOpenHelper.getWritableDatabase(), targetTableName, getContext());
         helper.close();
         return true;
@@ -331,7 +331,7 @@ public class LauncherProvider extends ContentProvider {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         if (Binder.getCallingPid() != Process.myPid()
-                && Favorites.TABLE_NAME.equalsIgnoreCase(args.table)) {
+                && Favorites.getFavoritesTableName().equalsIgnoreCase(args.table)) {
             mOpenHelper.removeGhostWidgets(mOpenHelper.getWritableDatabase());
         }
         int count = db.delete(args.table, args.where, args.args);
@@ -494,12 +494,12 @@ public class LauncherProvider extends ContentProvider {
                     + LauncherSettings.Favorites.ITEM_TYPE_FOLDER + " AND "
                     + LauncherSettings.Favorites._ID +  " NOT IN (SELECT " +
                             LauncherSettings.Favorites.CONTAINER + " FROM "
-                                + Favorites.TABLE_NAME + ")";
+                                + Favorites.getFavoritesTableName() + ")";
 
-            IntArray folderIds = LauncherDbUtils.queryIntArray(false, db, Favorites.TABLE_NAME,
+            IntArray folderIds = LauncherDbUtils.queryIntArray(false, db, Favorites.getFavoritesTableName(),
                     Favorites._ID, selection, null, null);
             if (!folderIds.isEmpty()) {
-                db.delete(Favorites.TABLE_NAME, Utilities.createDbSelectionQuery(
+                db.delete(Favorites.getFavoritesTableName(), Utilities.createDbSelectionQuery(
                         LauncherSettings.Favorites._ID, folderIds), null);
             }
             t.commit();
@@ -658,7 +658,7 @@ public class LauncherProvider extends ContentProvider {
             // Table creation sometimes fails silently, which leads to a crash loop.
             // This way, we will try to create a table every time after crash, so the device
             // would eventually be able to recover.
-            if (!tableExists(databaseHelper.getReadableDatabase(), Favorites.TABLE_NAME)) {
+            if (!tableExists(databaseHelper.getReadableDatabase(), Favorites.getFavoritesTableName())) {
                 Log.e(TAG, "Tables are missing after onCreate has been called. Trying to recreate");
                 // This operation is a no-op if the table already exists.
                 databaseHelper.addFavoritesTable(databaseHelper.getWritableDatabase(), true);
@@ -858,7 +858,7 @@ public class LauncherProvider extends ContentProvider {
                     if (!TextUtils.isEmpty(updatemap)) {
                         String query = String.format(Locale.ENGLISH,
                                 "UPDATE %1$s SET %2$s=CASE %3$s ELSE %2$s END WHERE %4$s = %5$d",
-                                Favorites.TABLE_NAME, Favorites.SCREEN, updatemap,
+                                Favorites.getFavoritesTableName(), Favorites.SCREEN, updatemap,
                                 Favorites.CONTAINER, Favorites.CONTAINER_DESKTOP);
                         db.execSQL(query);
                     }
@@ -874,14 +874,14 @@ public class LauncherProvider extends ContentProvider {
                 }
                 case 29: {
                     // Remove widget panel related leftover workspace items
-                    db.delete(Favorites.TABLE_NAME, Utilities.createDbSelectionQuery(
+                    db.delete(Favorites.getFavoritesTableName(), Utilities.createDbSelectionQuery(
                             Favorites.SCREEN, IntArray.wrap(-777, -778)), null);
                 }
                 case 30: {
                     if (FeatureFlags.QSB_ON_FIRST_SCREEN) {
                         // Clean up first row in screen 0 as it might contain junk data.
                         Log.d(TAG, "Cleaning up first row");
-                        db.delete(Favorites.TABLE_NAME,
+                        db.delete(Favorites.getFavoritesTableName(),
                                 String.format(Locale.ENGLISH,
                                         "%1$s = %2$d AND %3$s = %4$d AND %5$s = %6$d",
                                         Favorites.SCREEN, 0,
@@ -918,7 +918,7 @@ public class LauncherProvider extends ContentProvider {
          */
         public void createEmptyDB(SQLiteDatabase db) {
             try (SQLiteTransaction t = new SQLiteTransaction(db)) {
-                dropTable(db, Favorites.TABLE_NAME);
+                dropTable(db, Favorites.getFavoritesTableName());
                 dropTable(db, "workspaceScreens");
                 onCreate(db);
                 t.commit();
@@ -942,7 +942,7 @@ public class LauncherProvider extends ContentProvider {
                 return;
             }
             final IntSet validWidgets = IntSet.wrap(LauncherDbUtils.queryIntArray(false, db,
-                    Favorites.TABLE_NAME, Favorites.APPWIDGET_ID,
+                    Favorites.getFavoritesTableName(), Favorites.APPWIDGET_ID,
                     "itemType=" + Favorites.ITEM_TYPE_APPWIDGET, null, null));
             for (int widgetId : allWidgets) {
                 if (!validWidgets.contains(widgetId)) {
@@ -963,7 +963,7 @@ public class LauncherProvider extends ContentProvider {
         @Thunk void convertShortcutsToLauncherActivities(SQLiteDatabase db) {
             try (SQLiteTransaction t = new SQLiteTransaction(db);
                  // Only consider the primary user as other users can't have a shortcut.
-                 Cursor c = db.query(Favorites.TABLE_NAME,
+                 Cursor c = db.query(Favorites.getFavoritesTableName(),
                          new String[] { Favorites._ID, Favorites.INTENT},
                          "itemType=" + Favorites.ITEM_TYPE_SHORTCUT +
                                  " AND profileId=" + getDefaultUserSerial(),
@@ -1059,7 +1059,7 @@ public class LauncherProvider extends ContentProvider {
 
         @Override
         public int insertAndCheck(SQLiteDatabase db, ContentValues values) {
-            return dbInsertAndCheck(this, db, Favorites.TABLE_NAME, null, values);
+            return dbInsertAndCheck(this, db, Favorites.getFavoritesTableName(), null, values);
         }
 
         public void checkId(ContentValues values) {
@@ -1068,7 +1068,7 @@ public class LauncherProvider extends ContentProvider {
         }
 
         private int initializeMaxItemId(SQLiteDatabase db) {
-            return getMaxId(db, "SELECT MAX(%1$s) FROM %2$s", Favorites._ID, Favorites.TABLE_NAME);
+            return getMaxId(db, "SELECT MAX(%1$s) FROM %2$s", Favorites._ID, Favorites.getFavoritesTableName());
         }
 
         // Returns a new ID to use for an workspace screen in your database that is greater than all
@@ -1076,7 +1076,7 @@ public class LauncherProvider extends ContentProvider {
         private int getNewScreenId() {
             return getMaxId(getWritableDatabase(),
                     "SELECT MAX(%1$s) FROM %2$s WHERE %3$s = %4$d AND %1$s >= 0",
-                    Favorites.SCREEN, Favorites.TABLE_NAME, Favorites.CONTAINER,
+                    Favorites.SCREEN, Favorites.getFavoritesTableName(), Favorites.CONTAINER,
                     Favorites.CONTAINER_DESKTOP) + 1;
         }
 

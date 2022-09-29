@@ -328,7 +328,7 @@ public class LauncherModelHelper {
         int id = LauncherSettings.Settings.call(sandboxContext.getContentResolver(),
                 LauncherSettings.Settings.METHOD_NEW_ITEM_ID)
                 .getInt(LauncherSettings.Settings.EXTRA_VALUE);
-        addItem(type, screen, container, x, y, profileId, packageName, id, CONTENT_URI);
+        addItem(type, screen, container, x, y, profileId, packageName, id, LauncherSettings.Favorites.getContentUri());
         return id;
     }
 

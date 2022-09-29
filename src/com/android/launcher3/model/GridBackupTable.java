@@ -15,10 +15,6 @@
  */
 package com.android.launcher3.model;
 
-import static com.android.launcher3.LauncherSettings.Favorites.BACKUP_TABLE_NAME;
-import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
-import static com.android.launcher3.provider.LauncherDbUtils.tableExists;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -30,6 +26,10 @@ import androidx.annotation.IntDef;
 
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.pm.UserCache;
+
+import static com.android.launcher3.LauncherSettings.Favorites.BACKUP_TABLE_NAME;
+import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
+import static com.android.launcher3.provider.LauncherDbUtils.tableExists;
 
 /**
  * Helper class to backup and restore Favorites table into a separate table
@@ -88,7 +88,7 @@ public class GridBackupTable {
     public void createCustomBackupTable(String tableName) {
         long profileId = UserCache.INSTANCE.get(mContext).getSerialNumberForUser(
                 Process.myUserHandle());
-        copyTable(mDb, Favorites.TABLE_NAME, tableName, profileId);
+        copyTable(mDb, Favorites.getFavoritesTableName(), tableName, profileId);
         encodeDBProperties(0);
     }
 
@@ -103,7 +103,7 @@ public class GridBackupTable {
         }
         long userSerial = UserCache.INSTANCE.get(mContext).getSerialNumberForUser(
                 Process.myUserHandle());
-        copyTable(mDb, tableName, Favorites.TABLE_NAME, userSerial);
+        copyTable(mDb, tableName, Favorites.getFavoritesTableName(), userSerial);
         if (dropAfterUse) {
             dropTable(mDb, tableName);
         }
@@ -167,7 +167,7 @@ public class GridBackupTable {
             // skip restore if dimensions in backup table differs from current setup.
             return false;
         }
-        copyTable(mDb, Favorites.BACKUP_TABLE_NAME, Favorites.TABLE_NAME, oldProfileId);
+        copyTable(mDb, Favorites.BACKUP_TABLE_NAME, Favorites.getFavoritesTableName(), oldProfileId);
         Log.d(TAG, "Backup restored");
         return true;
     }
@@ -176,7 +176,7 @@ public class GridBackupTable {
      * Performs a backup on the workspace layout.
      */
     public void doBackup(long profileId, int options) {
-        copyTable(mDb, Favorites.TABLE_NAME, Favorites.BACKUP_TABLE_NAME, profileId);
+        copyTable(mDb, Favorites.getFavoritesTableName(), Favorites.BACKUP_TABLE_NAME, profileId);
         encodeDBProperties(options);
     }
 

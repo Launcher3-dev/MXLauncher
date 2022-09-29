@@ -48,6 +48,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 
 import com.android.launcher3.InvariantDeviceProfile;
+import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.provider.RestoreDbTask;
 import com.android.launcher3.util.LauncherModelHelper;
@@ -142,9 +143,9 @@ public class BackupRestoreTest {
     public void testOnRestoreSessionWithValidCondition_PerformsRestore() throws Exception {
         setupBackup();
         verifyTableIsFilled(BACKUP_TABLE_NAME, false);
-        verifyTableIsEmpty(TABLE_NAME);
+        verifyTableIsEmpty(LauncherSettings.Favorites.getFavoritesTableName());
         createRestoreSession();
-        verifyTableIsFilled(TABLE_NAME, true);
+        verifyTableIsFilled(LauncherSettings.Favorites.getFavoritesTableName(), true);
     }
 
     private void setupBackup() {
@@ -185,7 +186,7 @@ public class BackupRestoreTest {
 
     private void createTableUsingOldProfileId() {
         // simulates the creation of favorites table on old device
-        dropTable(mDb, TABLE_NAME);
+        dropTable(mDb, LauncherSettings.Favorites.getFavoritesTableName());
         addTableToDb(mDb, mOldMyProfileId, false);
     }
 

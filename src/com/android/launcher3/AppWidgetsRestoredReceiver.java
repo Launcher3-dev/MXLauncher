@@ -1,7 +1,5 @@
 package com.android.launcher3;
 
-import static android.os.Process.myUserHandle;
-
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
@@ -22,6 +20,8 @@ import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.provider.RestoreDbTask;
 import com.android.launcher3.util.ContentWriter;
 import com.android.launcher3.widget.LauncherAppWidgetHost;
+
+import static android.os.Process.myUserHandle;
 
 public class AppWidgetsRestoredReceiver extends BroadcastReceiver {
 
@@ -94,7 +94,7 @@ public class AppWidgetsRestoredReceiver extends BroadcastReceiver {
                     .put(LauncherSettings.Favorites.RESTORED, state)
                     .commit();
             if (result == 0) {
-                Cursor cursor = cr.query(Favorites.CONTENT_URI,
+                Cursor cursor = cr.query(Favorites.getContentUri(),
                         new String[] {Favorites.APPWIDGET_ID},
                         "appWidgetId=?", new String[] { oldWidgetId }, null);
                 try {

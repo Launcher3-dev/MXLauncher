@@ -24,6 +24,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherFiles
+import com.android.launcher3.LauncherSettings
 import com.android.launcher3.LauncherSettings.Favorites.*
 import com.android.launcher3.config.FeatureFlags
 import com.android.launcher3.model.GridSizeMigrationTaskV2.DbReader
@@ -121,7 +122,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -134,7 +135,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Check hotseat items
         var c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(SCREEN, INTENT),
             "container=$CONTAINER_HOTSEAT",
             null,
@@ -162,7 +163,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Check workspace items
         c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(CELLX, CELLY, INTENT),
             "container=$CONTAINER_DESKTOP",
             null,
@@ -206,7 +207,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -219,7 +220,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Check hotseat items
         val c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(SCREEN, INTENT),
             "container=$CONTAINER_HOTSEAT",
             null,
@@ -261,7 +262,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -274,7 +275,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Check hotseat items
         val c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(SCREEN, INTENT),
             "container=$CONTAINER_HOTSEAT",
             null,
@@ -326,7 +327,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numRows = 5
 
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -339,7 +340,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Get workspace items
         val c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(INTENT, SCREEN),
             "container=$CONTAINER_DESKTOP",
             null,
@@ -386,7 +387,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 5
         idp.numRows = 5
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -399,7 +400,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Get workspace items
         val c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(INTENT, SCREEN),
             "container=$CONTAINER_DESKTOP",
             null,
@@ -447,7 +448,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
+        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -460,7 +461,7 @@ class GridSizeMigrationTaskV2Test {
 
         // Get workspace items
         val c = context.contentResolver.query(
-            CONTENT_URI,
+            getContentUri(),
             arrayOf(INTENT, SCREEN),
             "container=$CONTAINER_DESKTOP",
             null,

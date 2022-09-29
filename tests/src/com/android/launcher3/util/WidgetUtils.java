@@ -105,7 +105,7 @@ public class WidgetUtils {
         item.screenId = screenId;
         item.onAddToDatabase(writer);
         writer.put(LauncherSettings.Favorites._ID, item.id);
-        resolver.insert(LauncherSettings.Favorites.CONTENT_URI,
+        resolver.insert(LauncherSettings.Favorites.getContentUri(),
                 writer.getValues(targetContext));
     }
 

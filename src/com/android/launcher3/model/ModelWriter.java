@@ -16,8 +16,6 @@
 
 package com.android.launcher3.model;
 
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
-
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -59,6 +57,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 
 /**
  * Class for handling model updates.
@@ -261,7 +261,7 @@ public class ModelWriter {
             item.onAddToDatabase(writer);
             writer.put(Favorites._ID, item.id);
 
-            cr.insert(Favorites.CONTENT_URI, writer.getValues(mContext));
+            cr.insert(Favorites.getContentUri(), writer.getValues(mContext));
 
             synchronized (mBgDataModel) {
                 checkItemInfoLocked(item.id, item, stackTrace);
@@ -319,7 +319,7 @@ public class ModelWriter {
 
         enqueueDeleteRunnable(() -> {
             ContentResolver cr = mContext.getContentResolver();
-            cr.delete(LauncherSettings.Favorites.CONTENT_URI,
+            cr.delete(LauncherSettings.Favorites.getContentUri(),
                     LauncherSettings.Favorites.CONTAINER + "=" + info.id, null);
             mBgDataModel.removeItem(mContext, info.contents);
             info.contents.clear();

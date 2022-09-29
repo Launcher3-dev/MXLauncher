@@ -11,6 +11,13 @@ public final class MxSettings {
      * PagedView can scroll circle-endless.
      */
     private boolean isPagedViewCircleScroll = FeatureFlags.LAUNCHER3_CIRCLE_SCROLL;
+
+    /**
+     * ture: all apps show in LauncherAllAppsContainerView,
+     * false: all apps show in workspace
+     */
+    private boolean isDrawerEnable = true;
+
     private Context mContext;
 
 
@@ -24,7 +31,12 @@ public final class MxSettings {
 
     public void loadSettings(Context context) {
         mContext = context.getApplicationContext();
-        loadScreenCycle();
+        init();
+    }
+
+    private void init() {
+        isPagedViewCircleScroll = LauncherSpUtil.getBooleanData(mContext, LauncherSpUtil.KEY_PAGE_CIRCLE);
+        isDrawerEnable = LauncherSpUtil.getBooleanData(mContext, LauncherSpUtil.KEY_DRAWER_ENABLE);
     }
 
     public void setPagedViewCircleScroll(boolean isPagedViewCircleScroll) {
@@ -32,12 +44,18 @@ public final class MxSettings {
         LauncherSpUtil.saveBooleanData(mContext, LauncherSpUtil.KEY_PAGE_CIRCLE, isPagedViewCircleScroll);
     }
 
-    public void loadScreenCycle() {
-        isPagedViewCircleScroll = LauncherSpUtil.getBooleanData(mContext, LauncherSpUtil.KEY_PAGE_CIRCLE);
-    }
-
     public boolean isPageViewCircleScroll() {
         return isPagedViewCircleScroll;
+    }
+
+
+    public boolean isDrawerEnable() {
+        return isDrawerEnable;
+    }
+
+    public void setDrawerEnable(boolean drawerEnable) {
+        isDrawerEnable = drawerEnable;
+        LauncherSpUtil.saveBooleanData(mContext, LauncherSpUtil.KEY_DRAWER_ENABLE, drawerEnable);
     }
 
 }

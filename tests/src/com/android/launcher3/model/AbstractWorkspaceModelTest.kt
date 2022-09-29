@@ -131,7 +131,7 @@ abstract class AbstractWorkspaceModelTest {
                 info.writeToValues(writer)
                 writer.put(LauncherSettings.Favorites._ID, info.id)
                 mTargetContext.contentResolver.insert(
-                    LauncherSettings.Favorites.CONTENT_URI,
+                    LauncherSettings.Favorites.getContentUri(),
                     writer.getValues(mTargetContext)
                 )
             }
