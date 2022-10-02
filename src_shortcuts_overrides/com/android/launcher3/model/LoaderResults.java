@@ -16,26 +16,23 @@
 
 package com.android.launcher3.model;
 
-import android.content.ComponentName;
-import android.content.pm.LauncherActivityInfo;
-import android.content.pm.LauncherApps;
 import android.util.Log;
-import android.util.Pair;
 
 import com.android.launcher3.LauncherAppState;
+import com.android.launcher3.LauncherModel;
 import com.android.launcher3.model.BgDataModel.Callbacks;
 import com.android.launcher3.model.data.AppInfo;
-import com.android.launcher3.model.data.ItemInfo;
-import com.android.launcher3.model.data.WorkspaceItemInfo;
+import com.android.launcher3.settings.MxSettings;
 import com.android.launcher3.util.ComponentKey;
+import com.android.launcher3.util.IntArray;
+import com.android.launcher3.util.IntSet;
 import com.android.launcher3.widget.model.WidgetsListBaseEntry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
-import static com.android.launcher3.model.data.AppInfo.makeLaunchIntent;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 /**
@@ -80,30 +77,19 @@ public class LoaderResults extends BaseLoaderResults {
         executeCallbacksTask(c -> c.bindAllWidgets(widgets), mUiExecutor);
     }
 
-    private Pair<ItemInfo, Object> createApplicationPair(AppInfo appInfo) {
-        String packageName = appInfo.intent.getPackage();
-        List<LauncherActivityInfo> laiList =
-                mApp.getContext().getSystemService(LauncherApps.class)
-                        .getActivityList(packageName, appInfo.user);
-
-        final WorkspaceItemInfo si = appInfo.makeWorkspaceItem(mApp.getContext());
-        si.user = appInfo.user;
-        si.itemType = ITEM_TYPE_APPLICATION;
-
-        LauncherActivityInfo lai;
-        boolean usePackageIcon = laiList.isEmpty();
-        if (usePackageIcon) {
-            lai = null;
-            si.intent = makeLaunchIntent(new ComponentName(packageName, ""))
-                    .setPackage(packageName);
-            si.status |= WorkspaceItemInfo.FLAG_AUTOINSTALL_ICON;
-        } else {
-            lai = laiList.get(0);
-            si.intent = makeLaunchIntent(lai);
+    public void finishBindAllApps(LauncherModel model) {
+        Log.d(TAG, "finishBindAllApps");
+        if (MxSettings.getInstance().isDrawerEnable()) {
+            return;
         }
-        mApp.getIconCache()
-                .getTitleAndIcon(si, () -> lai, usePackageIcon, false);
-        return Pair.create(si, null);
+        final IntArray orderedScreenIds = new IntArray();
+        orderedScreenIds.addAll(mBgDataModel.collectWorkspaceScreens());
+        for (Callbacks cb : model.getCallbacks()) {
+            final IntSet currentScreenIds =
+                    cb.getPagesToBindSynchronously(orderedScreenIds);
+            Objects.requireNonNull(currentScreenIds, "Null screen ids provided by " + cb);
+            executeCallbacksTask(c -> c.finishBindingItems(currentScreenIds), mUiExecutor);
+        }
     }
 
 }

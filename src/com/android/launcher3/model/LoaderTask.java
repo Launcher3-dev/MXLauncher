@@ -314,6 +314,10 @@ public class LoaderTask implements Runnable {
                 loadFolderNames();
             }
 
+            if (!MxSettings.getInstance().isDrawerEnable()) {
+                mResults.finishBindAllApps(mApp.getModel());
+            }
+
             verifyNotStopped();
             updateHandler.finish();
             logASplit(logger, "finish icon update");

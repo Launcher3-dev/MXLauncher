@@ -36,12 +36,15 @@ import com.android.launcher3.model.data.WorkspaceItemFactory;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.pm.InstallSessionHelper;
 import com.android.launcher3.pm.PackageInstallInfo;
+import com.android.launcher3.settings.MxSettings;
 import com.android.launcher3.testing.TestProtocol;
 import com.android.launcher3.util.IntArray;
+import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.PackageManagerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 /**
@@ -49,7 +52,7 @@ import java.util.concurrent.Executor;
  */
 public class AddAllAppsWorkspaceItemsTask implements LauncherModel.ModelUpdateTask {
 
-    private static final String LOG = "AddAllAppsWorkspaceItemsTask";
+    private static final String LOG = "Launcher.AddAllAppsWorkspaceItemsTask";
 
     private LauncherAppState mApp;
     private LauncherModel mModel;

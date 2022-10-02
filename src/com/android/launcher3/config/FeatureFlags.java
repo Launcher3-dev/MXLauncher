@@ -388,7 +388,7 @@ public final class FeatureFlags {
 
     // add by codemx.cn ---- 20200710 ---- start
     // 绑定完成后是否滑动到最后一页
-    public static final boolean SCROLL_TO_LAST_PAGE_WHEN_BIND_FINISH = false;
+    public static final boolean SCROLL_TO_LAST_PAGE_WHEN_BIND_FINISH = true;
 
     // 是否显示hotseat中应用名字
     public static final boolean LAUNCHER_HOTSEAT_TITLE_ENABLE = true;

@@ -29,6 +29,7 @@ import com.android.launcher3.model.BgDataModel.FixedContainerItems;
 import com.android.launcher3.model.data.AppInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
+import com.android.launcher3.settings.MxSettings;
 import com.android.launcher3.testing.TestProtocol;
 import com.android.launcher3.util.IntArray;
 import com.android.launcher3.util.IntSet;
@@ -256,7 +257,9 @@ public abstract class BaseLoaderResults {
             Executor pendingExecutor = pendingTasks::add;
             bindWorkspaceItems(otherWorkspaceItems, pendingExecutor);
             bindAppWidgets(otherAppWidgets, pendingExecutor);
-            executeCallbacksTask(c -> c.finishBindingItems(currentScreenIds), pendingExecutor);
+            if (MxSettings.getInstance().isDrawerEnable()) {
+                executeCallbacksTask(c -> c.finishBindingItems(currentScreenIds), pendingExecutor);
+            }
             pendingExecutor.execute(
                     () -> {
                         MODEL_EXECUTOR.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
