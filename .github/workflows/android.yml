@@ -29,7 +29,7 @@ jobs:
     - name: Checkout Android Keystore
       uses: actions/checkout@v2
       with:
-        repository: https://github.com/yuchuangu85/KeyStore #存储android打包用的key的仓库（格式：用户名/仓库名）
+        repository: https://github.com/yuchuangu85/keystore #存储android打包用的key的仓库（格式：用户名/仓库名）
         token: ${{ secrets.TOKEN }} # 连接仓库的token,需要单独配置
         path: KeyStore # 仓库的根目录名
     # 打包release
