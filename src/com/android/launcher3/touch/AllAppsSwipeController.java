@@ -15,6 +15,16 @@
  */
 package com.android.launcher3.touch;
 
+import android.view.MotionEvent;
+import android.view.animation.Interpolator;
+
+import com.android.launcher3.AbstractFloatingView;
+import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherState;
+import com.android.launcher3.anim.Interpolators;
+import com.android.launcher3.settings.MxSettings;
+import com.android.launcher3.states.StateAnimationConfig;
+
 import static com.android.launcher3.LauncherState.ALL_APPS;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.anim.Interpolators.DECELERATED_EASE;
@@ -32,15 +42,6 @@ import static com.android.launcher3.states.StateAnimationConfig.ANIM_SCRIM_FADE;
 import static com.android.launcher3.states.StateAnimationConfig.ANIM_VERTICAL_PROGRESS;
 import static com.android.launcher3.states.StateAnimationConfig.ANIM_WORKSPACE_FADE;
 import static com.android.launcher3.states.StateAnimationConfig.ANIM_WORKSPACE_SCALE;
-
-import android.view.MotionEvent;
-import android.view.animation.Interpolator;
-
-import com.android.launcher3.AbstractFloatingView;
-import com.android.launcher3.Launcher;
-import com.android.launcher3.LauncherState;
-import com.android.launcher3.anim.Interpolators;
-import com.android.launcher3.states.StateAnimationConfig;
 
 /**
  * TouchController to switch between NORMAL and ALL_APPS state.
@@ -96,6 +97,9 @@ public class AllAppsSwipeController extends AbstractStateChangeTouchController {
 
     @Override
     protected boolean canInterceptTouch(MotionEvent ev) {
+        if (!MxSettings.getInstance().isDrawerEnable()) {
+            return false;
+        }
         if (mCurrentAnimation != null) {
             // If we are already animating from a previous state, we can intercept.
             return true;

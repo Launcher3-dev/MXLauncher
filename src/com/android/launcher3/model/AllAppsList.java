@@ -64,8 +64,6 @@ public class AllAppsList {
     /** The list off all apps. */
     public final ArrayList<AppInfo> data = new ArrayList<>(DEFAULT_APPLICATIONS_NUMBER);
 
-    public final ArrayList<AppInfo> noPositionData = new ArrayList<>();
-
     private IconCache mIconCache;
     private AppFilter mAppFilter;
 

@@ -62,7 +62,7 @@ import java.security.InvalidParameterException;
  */
 public class LoaderCursor extends CursorWrapper {
 
-    private static final String TAG = "LoaderCursor";
+    private static final String TAG = "Launcher.LoaderCursor";
 
     private final LongSparseArray<UserHandle> allUsers;
 
@@ -392,6 +392,7 @@ public class LoaderCursor extends CursorWrapper {
      */
     public void checkAndAddItem(
             ItemInfo info, BgDataModel dataModel, LoaderMemoryLogger logger) {
+        Log.d(TAG, "checkAndAddItem: ItemInfo: " + info);
         if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
             // Ensure that it is a valid intent. An exception here will
             // cause the item loading to get skipped

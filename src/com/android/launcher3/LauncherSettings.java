@@ -354,12 +354,14 @@ public class LauncherSettings {
         public static final String APPWIDGET_SOURCE = "appWidgetSource";
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional) {
-            addTableToDb(db, myProfileId, optional, getFavoritesTableName());
+            addTableToDb(db, myProfileId, optional, TABLE_NAME);
+            addTableToDb(db, myProfileId, optional, TABLE_NAME_ALL);
         }
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional,
                 String tableName) {
-            String ifNotExists = optional ? " IF NOT EXISTS " : "";
+            String ifNotExists = " IF NOT EXISTS ";
+//            String ifNotExists = optional ? " IF NOT EXISTS " : "";
             db.execSQL("CREATE TABLE " + ifNotExists + tableName + " (" +
                     "_id INTEGER PRIMARY KEY," +
                     "title TEXT," +

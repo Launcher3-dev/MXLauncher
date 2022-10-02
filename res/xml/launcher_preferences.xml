@@ -56,4 +56,13 @@
         android:title="@string/developer_options_title"
         android:fragment="com.android.launcher3.settings.DeveloperOptionsFragment"/>
 
+    <SwitchPreference
+        android:key="pref_drawer_enable"
+        android:title="@string/drawer_enable"
+        android:summary="@string/drawer_enable_des"
+        android:defaultValue="false"
+        android:persistent="true"
+        launcher:logIdOn="615"
+        launcher:logIdOff="616" />
+
 </androidx.preference.PreferenceScreen>

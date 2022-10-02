@@ -115,7 +115,7 @@ import static com.android.launcher3.util.PackageManagerHelper.isSystemApp;
  *   - deep shortcuts within apps
  */
 public class LoaderTask implements Runnable {
-    private static final String TAG = "LoaderTask";
+    private static final String TAG = "Launcher.LoaderTask";
 
     private static final boolean DEBUG = true;
 

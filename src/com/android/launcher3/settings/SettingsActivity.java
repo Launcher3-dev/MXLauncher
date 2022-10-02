@@ -16,10 +16,6 @@
 
 package com.android.launcher3.settings;
 
-import static androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS;
-
-import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -51,9 +47,13 @@ import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.model.WidgetsModel;
 import com.android.launcher3.states.RotationHelper;
 import com.android.launcher3.uioverrides.plugins.PluginManagerWrapper;
+import com.android.launcher3.util.LauncherSpUtil;
 
 import java.util.Collections;
 import java.util.List;
+
+import static androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_ACCESSIBILITY_FOCUS;
+import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
 
 /**
  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
@@ -188,6 +188,7 @@ public class SettingsActivity extends FragmentActivity
         private String mHighLightKey;
         private boolean mPreferenceHighlighted = false;
         private Preference mDeveloperOptionPref;
+        private Preference mDrawerEnablePref;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -278,9 +279,20 @@ public class SettingsActivity extends FragmentActivity
                 case DEVELOPER_OPTIONS_KEY:
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
+                case LauncherSpUtil.PREF_DRAWER_ENABLE:
+                    mDrawerEnablePref = preference;
+                    updateDrawerEnable();
+                    return true;
             }
 
             return true;
+        }
+
+        private void updateDrawerEnable() {
+            mDrawerEnablePref.setOnPreferenceChangeListener((preference, newValue) -> {
+                MxSettings.getInstance().setDrawerEnable((Boolean) newValue);
+                return true;
+            });
         }
 
         /**

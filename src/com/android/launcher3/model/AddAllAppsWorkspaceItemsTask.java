@@ -107,7 +107,6 @@ public class AddAllAppsWorkspaceItemsTask implements LauncherModel.ModelUpdateTa
 
             List<ItemInfo> filteredItems = new ArrayList<>();
             for (AppInfo item : mItemList) {
-                Log.i(LOG, "execute: item.title " + item.title + " ,package: " + item.getTargetComponent().getPackageName());
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                         item.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) {
                     // Short-circuit this logic if the icon exists somewhere on the workspace
@@ -217,8 +216,10 @@ public class AddAllAppsWorkspaceItemsTask implements LauncherModel.ModelUpdateTa
                 // Save the WorkspaceItemInfo for binding in the workspace
                 addedItemsFinal.add(itemInfo);
 
-                // log bitmap and label
-                FileLog.d(LOG, "Adding item info to workspace: " + itemInfo);
+                if (TestProtocol.sDebugTracing) {
+                    // log bitmap and label
+                    FileLog.d(LOG, "Adding item info to workspace: " + itemInfo);
+                }
             }
         }
 

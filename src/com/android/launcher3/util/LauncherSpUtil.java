@@ -1,18 +1,20 @@
-package com.android.mxlibrary.util;
+package com.android.launcher3.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.android.launcher3.LauncherFiles;
+
 public final class LauncherSpUtil {
 
-    private static final String KEY_SP = "sp_mx";
+    private static final String KEY_SP = LauncherFiles.SHARED_PREFERENCES_KEY;
     public static final String KEY_QSB = "sp_key_qsb";// 搜索
     public static final String KEY_PULL_DOWN_SEARCH = "sp_key_pull_down_search";// 下来搜索
     public static final String KEY_LIGHT_STATUS_BAR = "sp_key_light_status_bar";// 状态栏亮还是暗
     public static final String KEY_PAGE_CIRCLE = "sp_key_page_circle";// 滑动循环
     public static final String KEY_ALL_APPS_PULL_UP = "sp_key_all_apps_pull_up";// 向上滑动显示所有APP页面
     public static final String KEY_SCROLL_EFFECT = "sp_scroll_effect";// 滑动特效
-    public static final String KEY_DRAWER_ENABLE = "sp_drawer_enable";// 是否显示抽屉
+    public static final String PREF_DRAWER_ENABLE = "pref_drawer_enable";// 是否显示抽屉
 
 
     public static void saveStringData(Context context, String key, String data) {

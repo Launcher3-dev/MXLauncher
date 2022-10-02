@@ -51,7 +51,7 @@ import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
  */
 public abstract class BaseLoaderResults {
 
-    protected static final String TAG = "LoaderResults";
+    protected static final String TAG = "Launcher.LoaderResults";
     protected static final int INVALID_SCREEN_ID = -1;
     protected static final int ITEMS_CHUNK = 6; // batch size for the workspace icons
 
@@ -94,6 +94,7 @@ public abstract class BaseLoaderResults {
             }
             mMyBindingId = mBgDataModel.lastBindId;
         }
+        Log.d(TAG, "bindWorkspace: workspaceItems: " + workspaceItems.size());
 
         for (Callbacks cb : mCallbacksList) {
             new WorkspaceBinder(cb, mUiExecutor, mApp, mBgDataModel, mMyBindingId,
@@ -244,13 +245,13 @@ public abstract class BaseLoaderResults {
 
             // Bind workspace screens
             executeCallbacksTask(c -> c.bindScreens(mOrderedScreenIds), mUiExecutor);
-
+            Log.d(TAG, "bind: currentWorkspaceItems.size: "+ currentWorkspaceItems.size());
             // Load items on the current page.
             bindWorkspaceItems(currentWorkspaceItems, mUiExecutor);
             bindAppWidgets(currentAppWidgets, mUiExecutor);
             mExtraItems.forEach(item ->
                     executeCallbacksTask(c -> c.bindExtraContainerItems(item), mUiExecutor));
-
+            Log.d(TAG, "bind: otherWorkspaceItems.size: "+ otherWorkspaceItems.size());
             RunnableList pendingTasks = new RunnableList();
             Executor pendingExecutor = pendingTasks::add;
             bindWorkspaceItems(otherWorkspaceItems, pendingExecutor);

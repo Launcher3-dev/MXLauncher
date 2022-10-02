@@ -16,51 +16,6 @@
 
 package com.android.launcher3;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static android.content.pm.ActivityInfo.CONFIG_ORIENTATION;
-import static android.content.pm.ActivityInfo.CONFIG_SCREEN_SIZE;
-import static android.content.pm.ActivityInfo.CONFIG_UI_MODE;
-import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO;
-import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-
-import static com.android.launcher3.AbstractFloatingView.TYPE_ALL;
-import static com.android.launcher3.AbstractFloatingView.TYPE_FOLDER;
-import static com.android.launcher3.AbstractFloatingView.TYPE_ICON_SURFACE;
-import static com.android.launcher3.AbstractFloatingView.TYPE_REBIND_SAFE;
-import static com.android.launcher3.AbstractFloatingView.TYPE_SNACKBAR;
-import static com.android.launcher3.AbstractFloatingView.getTopOpenViewWithType;
-import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
-import static com.android.launcher3.LauncherState.ALL_APPS;
-import static com.android.launcher3.LauncherState.FLAG_CLOSE_POPUPS;
-import static com.android.launcher3.LauncherState.FLAG_MULTI_PAGE;
-import static com.android.launcher3.LauncherState.FLAG_NON_INTERACTIVE;
-import static com.android.launcher3.LauncherState.NORMAL;
-import static com.android.launcher3.LauncherState.NO_OFFSET;
-import static com.android.launcher3.LauncherState.NO_SCALE;
-import static com.android.launcher3.LauncherState.SPRING_LOADED;
-import static com.android.launcher3.Utilities.postAsyncCallback;
-import static com.android.launcher3.accessibility.LauncherAccessibilityDelegate.getSupportedActions;
-import static com.android.launcher3.logging.StatsLogManager.EventEnum;
-import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_BACKGROUND;
-import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_HOME;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_ENTRY;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_ENTRY_WITH_DEVICE_SEARCH;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_EXIT;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ONRESUME;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ONSTOP;
-import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WIDGET_RECONFIGURED;
-import static com.android.launcher3.model.ItemInstallQueue.FLAG_ACTIVITY_PAUSED;
-import static com.android.launcher3.model.ItemInstallQueue.FLAG_DRAG_AND_DROP;
-import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
-import static com.android.launcher3.popup.SystemShortcut.INSTALL;
-import static com.android.launcher3.popup.SystemShortcut.WIDGETS;
-import static com.android.launcher3.states.RotationHelper.REQUEST_LOCK;
-import static com.android.launcher3.states.RotationHelper.REQUEST_NONE;
-import static com.android.launcher3.testing.TestProtocol.BAD_STATE;
-import static com.android.launcher3.util.ItemInfoMatcher.forFolderMatch;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -169,6 +124,7 @@ import com.android.launcher3.popup.PopupContainerWithArrow;
 import com.android.launcher3.popup.PopupDataProvider;
 import com.android.launcher3.popup.SystemShortcut;
 import com.android.launcher3.qsb.QsbContainerView;
+import com.android.launcher3.settings.MxSettings;
 import com.android.launcher3.statemanager.StateManager;
 import com.android.launcher3.statemanager.StateManager.StateHandler;
 import com.android.launcher3.statemanager.StatefulActivity;
@@ -231,6 +187,50 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static android.content.pm.ActivityInfo.CONFIG_ORIENTATION;
+import static android.content.pm.ActivityInfo.CONFIG_SCREEN_SIZE;
+import static android.content.pm.ActivityInfo.CONFIG_UI_MODE;
+import static android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO;
+import static android.view.accessibility.AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+import static com.android.launcher3.AbstractFloatingView.TYPE_ALL;
+import static com.android.launcher3.AbstractFloatingView.TYPE_FOLDER;
+import static com.android.launcher3.AbstractFloatingView.TYPE_ICON_SURFACE;
+import static com.android.launcher3.AbstractFloatingView.TYPE_REBIND_SAFE;
+import static com.android.launcher3.AbstractFloatingView.TYPE_SNACKBAR;
+import static com.android.launcher3.AbstractFloatingView.getTopOpenViewWithType;
+import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+import static com.android.launcher3.LauncherState.ALL_APPS;
+import static com.android.launcher3.LauncherState.FLAG_CLOSE_POPUPS;
+import static com.android.launcher3.LauncherState.FLAG_MULTI_PAGE;
+import static com.android.launcher3.LauncherState.FLAG_NON_INTERACTIVE;
+import static com.android.launcher3.LauncherState.NORMAL;
+import static com.android.launcher3.LauncherState.NO_OFFSET;
+import static com.android.launcher3.LauncherState.NO_SCALE;
+import static com.android.launcher3.LauncherState.SPRING_LOADED;
+import static com.android.launcher3.Utilities.postAsyncCallback;
+import static com.android.launcher3.accessibility.LauncherAccessibilityDelegate.getSupportedActions;
+import static com.android.launcher3.logging.StatsLogManager.EventEnum;
+import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_BACKGROUND;
+import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_HOME;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_ENTRY;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_ENTRY_WITH_DEVICE_SEARCH;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_EXIT;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ONRESUME;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ONSTOP;
+import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WIDGET_RECONFIGURED;
+import static com.android.launcher3.model.ItemInstallQueue.FLAG_ACTIVITY_PAUSED;
+import static com.android.launcher3.model.ItemInstallQueue.FLAG_DRAG_AND_DROP;
+import static com.android.launcher3.popup.SystemShortcut.APP_INFO;
+import static com.android.launcher3.popup.SystemShortcut.INSTALL;
+import static com.android.launcher3.popup.SystemShortcut.WIDGETS;
+import static com.android.launcher3.states.RotationHelper.REQUEST_LOCK;
+import static com.android.launcher3.states.RotationHelper.REQUEST_NONE;
+import static com.android.launcher3.testing.TestProtocol.BAD_STATE;
+import static com.android.launcher3.util.ItemInfoMatcher.forFolderMatch;
 
 /**
  * Default launcher application.
@@ -453,6 +453,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         super.onCreate(savedInstanceState);
 
+        MxSettings.getInstance().loadSettings(this);
         LauncherAppState app = LauncherAppState.getInstance(this);
         mOldConfig = new Configuration(getResources().getConfiguration());
         mModel = app.getModel();
@@ -2326,9 +2327,11 @@ public class Launcher extends StatefulActivity<LauncherState>
         // We add the items without animation on non-visible pages, and with
         // animations on the new page (which we will try and snap to).
         if (addNotAnimated != null && !addNotAnimated.isEmpty()) {
+            Log.d(TAG, "bindAppsAdded: addNotAnimated.size: " + addNotAnimated.size());
             bindItems(addNotAnimated, false);
         }
         if (addAnimated != null && !addAnimated.isEmpty()) {
+            Log.d(TAG, "bindAppsAdded: addAnimated.size: " + addAnimated.size());
             bindItems(addAnimated, true);
         }
 
@@ -2444,7 +2447,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         View viewToFocus = newView;
         // Animate to the correct pager
-        if (forceAnimateIcons && newItemsScreenId > -1) {
+        if (forceAnimateIcons && newItemsScreenId > -1 && FeatureFlags.SCROLL_TO_LAST_PAGE_WHEN_BIND_FINISH) {
             AnimatorSet anim = new AnimatorSet();
             anim.playTogether(bounceAnims);
             if (focusFirstItemForAccessibility && viewToFocus != null) {
