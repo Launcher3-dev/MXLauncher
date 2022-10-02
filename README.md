@@ -12,8 +12,13 @@
 
 ## 主要分支
 
-* master：(Launcher-master-20220821(b62600b8c3de47a26386aa59f06959b2cf1af753))--Android-13
+* Main：(Launcher-master-20220821(b62600b8c3de47a26386aa59f06959b2cf1af753))--Android-13
 * Dev：增加一些功能
+* feature：开发特性需求
+
+## 常见问题
+
+[常见问题备注](REMARKS.md)
 
 ## 功能规划
 

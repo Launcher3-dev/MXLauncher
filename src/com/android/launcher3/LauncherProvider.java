@@ -520,8 +520,10 @@ public class LauncherProvider extends ContentProvider {
     }
 
     private void clearFlagEmptyDbCreated() {
+        Log.d(TAG, "clearFlagEmptyDbCreated: " + mOpenHelper.getKey(getEmptyDatabaseCreated()));
         Utilities.getPrefs(getContext()).edit()
                 .remove(mOpenHelper.getKey(getEmptyDatabaseCreated())).commit();
+        Log.d(TAG, "clearFlagEmptyDbCreated: " + Utilities.getPrefs(getContext()).getBoolean(mOpenHelper.getKey(getEmptyDatabaseCreated()), false));
     }
 
     /**
@@ -532,8 +534,9 @@ public class LauncherProvider extends ContentProvider {
      * 4) The default configuration for the particular device
      */
     synchronized private void loadDefaultFavoritesIfNecessary() {
-        Log.d(TAG, "loadDefaultFavoritesIfNecessary");
+        Log.d(TAG, "loadDefaultFavoritesIfNecessary: " + mOpenHelper.getKey(getEmptyDatabaseCreated()));
         SharedPreferences sp = Utilities.getPrefs(getContext());
+        Log.d(TAG, "loadDefaultFavoritesIfNecessary: " + sp.getBoolean(mOpenHelper.getKey(getEmptyDatabaseCreated()), false));
 
         if (sp.getBoolean(mOpenHelper.getKey(getEmptyDatabaseCreated()), false)) {
             Log.d(TAG, "loading default workspace");
@@ -560,6 +563,9 @@ public class LauncherProvider extends ContentProvider {
             if (loader == null) {
                 loader = getDefaultLayoutParser(widgetHost);
             }
+
+            Log.d(TAG, "loadDefaultFavoritesIfNecessary: usingExternallyProvidedLayout: " + usingExternallyProvidedLayout);
+            Log.d(TAG, "loadDefaultFavoritesIfNecessary: loader: " + loader);
 
             // There might be some partially restored DB items, due to buggy restore logic in
             // previous versions of launcher.
@@ -634,12 +640,13 @@ public class LauncherProvider extends ContentProvider {
         InvariantDeviceProfile idp = LauncherAppState.getIDP(getContext());
         int defaultLayout = mUseTestWorkspaceLayout
                 ? TEST_WORKSPACE_LAYOUT_RES_XML : idp.defaultLayoutId;
+        Log.d(TAG, "getDefaultLayoutParser:defaultLayout: " + defaultLayout);
 
         if (getContext().getSystemService(UserManager.class).isDemoUser()
                 && idp.demoModeLayoutId != 0) {
             defaultLayout = idp.demoModeLayoutId;
         }
-
+        Log.d(TAG, "getDefaultLayoutParser:defaultLayout22222: " + defaultLayout);
         return new DefaultLayoutParser(getContext(), widgetHost,
                 mOpenHelper, getContext().getResources(), defaultLayout);
     }
@@ -740,6 +747,7 @@ public class LauncherProvider extends ContentProvider {
          * Overriden in tests.
          */
         protected void onEmptyDbCreated() {
+            Log.d(TAG, "onEmptyDbCreated: ");
             // Set the flag for empty DB
             Utilities.getPrefs(mContext).edit().putBoolean(getKey(EMPTY_DATABASE_CREATED), true)
                     .commit();
@@ -929,6 +937,7 @@ public class LauncherProvider extends ContentProvider {
          * Clears all the data for a fresh start.
          */
         public void createEmptyDB(SQLiteDatabase db) {
+            Log.d(TAG, "createEmptyDB: ");
             try (SQLiteTransaction t = new SQLiteTransaction(db)) {
                 dropTable(db, Favorites.getFavoritesTableName());
                 dropTable(db, "workspaceScreens");

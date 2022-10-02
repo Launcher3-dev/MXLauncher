@@ -688,7 +688,7 @@ public class AutoInstallsLayout {
      */
     protected static String getAttributeValue(XmlPullParser parser, String attribute) {
         String value = parser.getAttributeValue(
-                "http://schemas.android.com/apk/res-auto/com.android.launcher3", attribute);
+                "http://schemas.android.com/apk/res-auto", attribute);
         if (value == null) {
             value = parser.getAttributeValue(null, attribute);
         }

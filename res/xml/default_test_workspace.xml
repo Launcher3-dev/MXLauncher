@@ -15,7 +15,7 @@
 -->
 
 <!-- Split display specific version of Launcher3/res/xml/default_workspace_4x4.xml -->
-<favorites xmlns:launcher="http://schemas.android.com/apk/res-auto/com.android.launcher3" >
+<favorites xmlns:launcher="http://schemas.android.com/apk/res-auto" >
 
     <!-- Launcher Test Activity -->
     <resolve

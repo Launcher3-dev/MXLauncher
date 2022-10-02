@@ -34,7 +34,7 @@ import java.util.List;
  * Implements the layout parser with rules for internal layouts and partner layouts.
  */
 public class DefaultLayoutParser extends AutoInstallsLayout {
-    private static final String TAG = "DefaultLayoutParser";
+    private static final String TAG = "Launcher.DefaultLayoutParser";
 
     protected static final String TAG_RESOLVE = "resolve";
     private static final String TAG_FAVORITES = "favorites";
@@ -90,10 +90,15 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
     protected void parseContainerAndScreen(XmlPullParser parser, int[] out) {
         out[0] = LauncherSettings.Favorites.CONTAINER_DESKTOP;
         String strContainer = getAttributeValue(parser, ATTR_CONTAINER);
+        Log.d(TAG, "parseContainerAndScreen: strContainer: " + strContainer);
         if (strContainer != null) {
             out[0] = Integer.parseInt(strContainer);
         }
-        out[1] = Integer.parseInt(getAttributeValue(parser, ATTR_SCREEN));
+        String strScreen = getAttributeValue(parser, ATTR_SCREEN);
+        Log.d(TAG, "parseContainerAndScreen: screen: " + strScreen);
+        if (strScreen != null) {
+            out[1] = Integer.parseInt(getAttributeValue(parser, ATTR_SCREEN));
+        }
     }
 
     /**
