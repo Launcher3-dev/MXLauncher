@@ -22,21 +22,49 @@ apply plugin: 'com.google.protobuf'
 
 def protocVersion = '3.8.0'
 
+// 读取前面配置的keystore.properties
+def keyProps = new Properties()
+def keyPropsFile = rootProject.file('keystore/keystore.properties')
+if (keyPropsFile.exists()) {
+    keyProps.load(new FileInputStream(keyPropsFile))
+}
+
+// 读取version.properties
+def versionProps = new Properties()
+def versionPropsFile = rootProject.file('version.properties')
+if (versionPropsFile.exists()) {
+    versionProps.load(new FileInputStream(versionPropsFile))
+}
+
 android {
     compileSdkVersion COMPILE_SDK
 
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        versionCode versionProps['versionCode'].toInteger()
+        versionName versionProps['versionName']
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    // 签名
+    signingConfigs {
+        release {
+            keyAlias keyProps['keyAlias']
+            keyPassword keyProps['keyPassword']
+            storeFile keyProps['storeFile'] ? file(keyProps['storeFile']) : null
+            storePassword keyProps['storePassword']
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
+        }
+        release {
+            signingConfig signingConfigs.release
         }
     }
 
@@ -199,4 +227,47 @@ protobuf {
             }
         }
     }
+}
+
+
+task upgradeVersion {
+    group 'help'
+    description '构建新版本'
+    doLast {
+        println("---自动升级版本号---\n")
+        if (versionPropsFile.exists()) {
+            versionProps.load(new FileInputStream(versionPropsFile))
+        }
+        String oldVersionCode = versionProps['versionCode']
+        String oldVersionName = versionProps['versionName']
+        if (oldVersionCode == null || oldVersionName == null ||
+                oldVersionCode.isEmpty() || oldVersionName.isEmpty()) {
+            println("error:版本号不能为空")
+            return;
+        }
+        versionProps['versionCode'] = String.valueOf(versionProps['versionCode'].toInteger() + 1)
+        String str = versionProps['versionName'].toString()
+        versionProps['versionName'] = str.substring(0, str.lastIndexOf('.') + 1) +
+                (str.substring(str.lastIndexOf('.') + 1).toInteger() + 1)
+        String tip =
+                "版本号从$oldVersionName($oldVersionCode)升级到${versionProps['versionName']}(${versionProps['versionCode']})"
+        println(tip)
+
+        def writer = new FileWriter(versionPropsFile)
+        versionProps.store(writer, null)
+        writer.flush()
+        writer.close()
+        def tag = "v${versionProps['versionName']}"
+        cmdExecute("git pull")
+        cmdExecute("git add version.properties")
+        cmdExecute("git commit -m \"版本号升级为：$tag\"")
+        cmdExecute("git push origin")
+        cmdExecute("git tag $tag")
+        cmdExecute("git push origin $tag")
+    }
+}
+
+void cmdExecute(String cmd) {
+    println "\n执行$cmd"
+    println cmd.execute().text
 }

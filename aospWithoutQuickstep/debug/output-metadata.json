@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.android.ttlauncher3",
+  "variantName": "aospWithoutQuickstepDebug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 1,
+      "versionName": "1.0",
+      "outputFile": "MXLauncher-aosp-withoutQuickstep-debug.apk"
+    }
+  ],
+  "elementType": "File"
+}
