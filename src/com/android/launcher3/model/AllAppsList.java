@@ -16,9 +16,6 @@
 
 package com.android.launcher3.model;
 
-import static com.android.launcher3.model.data.AppInfo.COMPONENT_KEY_COMPARATOR;
-import static com.android.launcher3.model.data.AppInfo.EMPTY_ARRAY;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -49,6 +46,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import static com.android.launcher3.model.data.AppInfo.COMPONENT_KEY_COMPARATOR;
+import static com.android.launcher3.model.data.AppInfo.EMPTY_ARRAY;
+
 
 /**
  * Stores the list of all applications for the all apps view.
@@ -63,6 +63,8 @@ public class AllAppsList {
 
     /** The list off all apps. */
     public final ArrayList<AppInfo> data = new ArrayList<>(DEFAULT_APPLICATIONS_NUMBER);
+
+    public final ArrayList<AppInfo> noPositionData = new ArrayList<>();
 
     private IconCache mIconCache;
     private AppFilter mAppFilter;

@@ -373,6 +373,10 @@ public final class FeatureFlags {
     }
 
     // add by codemx.cn----20220911----start
+
+    // 是否显示抽屉默认值
+    public static final boolean LAUNCHER3_ENABLE_DRAWER = false;
+
     // 是否循环滑动
     public static final boolean LAUNCHER3_CIRCLE_SCROLL = true;
 

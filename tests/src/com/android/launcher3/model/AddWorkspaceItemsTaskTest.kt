@@ -177,7 +177,8 @@ class AddWorkspaceItemsTaskTest : AbstractWorkspaceModelTest() {
                 any(),
                 any(),
                 any(),
-                any()
+                any(),
+                true
             )
         )
             .then { spaceStack.removeFirst().toIntArray() }
@@ -194,7 +195,7 @@ class AddWorkspaceItemsTaskTest : AbstractWorkspaceModelTest() {
         verify(mWorkspaceItemSpaceFinder, times(numberOfExpectedCall))
             .findSpaceForItem(
                 same(mAppState), same(mModelHelper.bgDataModel),
-                eq(IntArray.wrap(*nonEmptyScreenIds.toIntArray())), eq(IntArray()), eq(1), eq(1)
+                eq(IntArray.wrap(*nonEmptyScreenIds.toIntArray())), eq(IntArray()), eq(1), eq(1), true
             )
     }
 

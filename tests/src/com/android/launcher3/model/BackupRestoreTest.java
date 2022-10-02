@@ -20,7 +20,6 @@ import static android.content.pm.PackageManager.INSTALL_REASON_DEVICE_RESTORE;
 import static android.os.Process.myUserHandle;
 
 import static com.android.launcher3.LauncherSettings.Favorites.BACKUP_TABLE_NAME;
-import static com.android.launcher3.LauncherSettings.Favorites.TABLE_NAME;
 import static com.android.launcher3.LauncherSettings.Favorites.addTableToDb;
 import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
 import static com.android.launcher3.provider.LauncherDbUtils.tableExists;

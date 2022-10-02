@@ -21,9 +21,9 @@ import android.content.pm.LauncherApps;
 import android.content.pm.PackageInstaller.SessionInfo;
 import android.os.UserHandle;
 import android.util.Log;
-import android.util.Pair;
 
 import com.android.launcher3.LauncherAppState;
+import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherModel.CallbackTask;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.logging.FileLog;
@@ -42,41 +42,63 @@ import com.android.launcher3.util.PackageManagerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
- * Task to add auto-created workspace items.
+ * Task to add all apps(not added to workspace)  workspace items.
  */
-public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
+public class AddAllAppsWorkspaceItemsTask implements LauncherModel.ModelUpdateTask {
 
-    private static final String LOG = "AddWorkspaceItemsTask";
+    private static final String LOG = "AddAllAppsWorkspaceItemsTask";
 
-    private final List<Pair<ItemInfo, Object>> mItemList;
+    private LauncherAppState mApp;
+    private LauncherModel mModel;
+    private BgDataModel mDataModel;
+    private AllAppsList mAllAppsList;
+    private Executor mUiExecutor;
+
+    private final List<AppInfo> mItemList;
 
     private final WorkspaceItemSpaceFinder mItemSpaceFinder;
 
     /**
      * @param itemList items to add on the workspace
      */
-    public AddWorkspaceItemsTask(List<Pair<ItemInfo, Object>> itemList) {
+    public AddAllAppsWorkspaceItemsTask(ArrayList<AppInfo> itemList) {
         this(itemList, new WorkspaceItemSpaceFinder());
     }
 
     /**
-     * @param itemList items to add on the workspace
+     * @param itemList        items to add on the workspace
      * @param itemSpaceFinder inject WorkspaceItemSpaceFinder dependency for testing
      */
-    public AddWorkspaceItemsTask(List<Pair<ItemInfo, Object>> itemList,
-            WorkspaceItemSpaceFinder itemSpaceFinder) {
+    public AddAllAppsWorkspaceItemsTask(List<AppInfo> itemList,
+                                        WorkspaceItemSpaceFinder itemSpaceFinder) {
         mItemList = itemList;
         mItemSpaceFinder = itemSpaceFinder;
     }
 
     @Override
+    public void init(LauncherAppState app, LauncherModel model, BgDataModel dataModel,
+                     AllAppsList allAppsList, Executor uiExecutor) {
+        mApp = app;
+        mModel = model;
+        mDataModel = dataModel;
+        mAllAppsList = allAppsList;
+        mUiExecutor = uiExecutor;
+    }
+
+    @Override
+    public void run() {
+        Log.d(LOG, "run: ");
+        execute(mApp, mDataModel, mAllAppsList);
+    }
+
     public void execute(LauncherAppState app, BgDataModel dataModel, AllAppsList apps) {
         if (mItemList.isEmpty()) {
             return;
         }
-
+        Log.d(LOG, "execute: mItemList.size " + mItemList.size());
         final ArrayList<ItemInfo> addedItemsFinal = new ArrayList<>();
         final IntArray addedWorkspaceScreensFinal = new IntArray();
 
@@ -84,8 +106,8 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
             IntArray workspaceScreens = dataModel.collectWorkspaceScreens();
 
             List<ItemInfo> filteredItems = new ArrayList<>();
-            for (Pair<ItemInfo, Object> entry : mItemList) {
-                ItemInfo item = entry.first;
+            for (AppInfo item : mItemList) {
+                Log.i(LOG, "execute: item.title " + item.title + " ,package: " + item.getTargetComponent().getPackageName());
                 if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION ||
                         item.itemType == LauncherSettings.Favorites.ITEM_TYPE_SHORTCUT) {
                     // Short-circuit this logic if the icon exists somewhere on the workspace
@@ -96,25 +118,8 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                         }
                         continue;
                     }
-
-                    // b/139663018 Short-circuit this logic if the icon is a system app
-                    if (PackageManagerHelper.isSystemApp(app.getContext(), item.getIntent())) {
-                        if (TestProtocol.sDebugTracing) {
-                            Log.d(TestProtocol.MISSING_PROMISE_ICON,
-                                    LOG + " Item is a system app.");
-                        }
-                        continue;
-                    }
                 }
-
-                if (item.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
-                    if (item instanceof WorkspaceItemFactory) {
-                        item = ((WorkspaceItemFactory) item).makeWorkspaceItem(app.getContext());
-                    }
-                }
-                if (item != null) {
-                    filteredItems.add(item);
-                }
+                filteredItems.add(item);
             }
 
             Log.i(LOG, "execute: filteredItems.size " + filteredItems.size());
@@ -205,7 +210,7 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
                 }
 
                 // Add the shortcut to the db
-                getModelWriter().addItemToDatabase(itemInfo,
+                mModel.getWriter(false, false, null).addItemToDatabase(itemInfo,
                         LauncherSettings.Favorites.CONTAINER_DESKTOP, screenId,
                         coords[1], coords[2]);
 
@@ -298,4 +303,14 @@ public class AddWorkspaceItemsTask extends BaseModelUpdateTask {
         }
         return false;
     }
+
+    /**
+     * Schedules a {@param task} to be executed on the current callbacks.
+     */
+    public final void scheduleCallbackTask(final CallbackTask task) {
+        for (final Callbacks cb : mModel.getCallbacks()) {
+            mUiExecutor.execute(() -> task.execute(cb));
+        }
+    }
+
 }

@@ -16,23 +16,37 @@
 
 package com.android.launcher3.model;
 
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import android.content.ComponentName;
+import android.content.pm.LauncherActivityInfo;
+import android.content.pm.LauncherApps;
+import android.util.Log;
+import android.util.Pair;
 
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.model.BgDataModel.Callbacks;
+import com.android.launcher3.model.data.AppInfo;
+import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.util.ComponentKey;
 import com.android.launcher3.widget.model.WidgetsListBaseEntry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION;
+import static com.android.launcher3.model.data.AppInfo.makeLaunchIntent;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 /**
  * Helper class to handle results of {@link com.android.launcher3.model.LoaderTask}.
  */
 public class LoaderResults extends BaseLoaderResults {
 
+    public static final String TAG = "Launcher.LoaderResults";
+
     public LoaderResults(LauncherAppState app, BgDataModel dataModel,
-            AllAppsList allAppsList, Callbacks[] callbacks) {
+                         AllAppsList allAppsList, Callbacks[] callbacks) {
         super(app, dataModel, allAppsList, callbacks, MAIN_EXECUTOR);
     }
 
@@ -46,9 +60,50 @@ public class LoaderResults extends BaseLoaderResults {
     }
 
     @Override
+    public void bindAllAppToWorkspace() {
+        ArrayList<AppInfo> allApps = (ArrayList<AppInfo>) mBgAllAppsList.data.clone();
+
+        // Add the items and clear queue
+        if (allApps.isEmpty()) {
+            Log.d(TAG, "bindAllAppToWorkspace: all app is null");
+            return;
+        }
+        Log.i(TAG, "bindAllAppToWorkspace: all app size is " + allApps.size());
+        // add log
+        mApp.getModel().addAndBindAllAddedWorkspaceItems(allApps);
+    }
+
+    @Override
     public void bindWidgets() {
         final List<WidgetsListBaseEntry> widgets =
                 mBgDataModel.widgetsModel.getWidgetsListForPicker(mApp.getContext());
         executeCallbacksTask(c -> c.bindAllWidgets(widgets), mUiExecutor);
     }
+
+    private Pair<ItemInfo, Object> createApplicationPair(AppInfo appInfo) {
+        String packageName = appInfo.intent.getPackage();
+        List<LauncherActivityInfo> laiList =
+                mApp.getContext().getSystemService(LauncherApps.class)
+                        .getActivityList(packageName, appInfo.user);
+
+        final WorkspaceItemInfo si = appInfo.makeWorkspaceItem(mApp.getContext());
+        si.user = appInfo.user;
+        si.itemType = ITEM_TYPE_APPLICATION;
+
+        LauncherActivityInfo lai;
+        boolean usePackageIcon = laiList.isEmpty();
+        if (usePackageIcon) {
+            lai = null;
+            si.intent = makeLaunchIntent(new ComponentName(packageName, ""))
+                    .setPackage(packageName);
+            si.status |= WorkspaceItemInfo.FLAG_AUTOINSTALL_ICON;
+        } else {
+            lai = laiList.get(0);
+            si.intent = makeLaunchIntent(lai);
+        }
+        mApp.getIconCache()
+                .getTitleAndIcon(si, () -> lai, usePackageIcon, false);
+        return Pair.create(si, null);
+    }
+
 }

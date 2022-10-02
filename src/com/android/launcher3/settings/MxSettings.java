@@ -16,7 +16,7 @@ public final class MxSettings {
      * ture: all apps show in LauncherAllAppsContainerView,
      * false: all apps show in workspace
      */
-    private boolean isDrawerEnable = true;
+    private boolean isDrawerEnable = FeatureFlags.LAUNCHER3_ENABLE_DRAWER;
 
     private Context mContext;
 

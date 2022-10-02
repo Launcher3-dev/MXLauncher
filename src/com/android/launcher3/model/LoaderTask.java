@@ -72,6 +72,7 @@ import com.android.launcher3.pm.InstallSessionHelper;
 import com.android.launcher3.pm.PackageInstallInfo;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.qsb.QsbContainerView;
+import com.android.launcher3.settings.MxSettings;
 import com.android.launcher3.shortcuts.ShortcutKey;
 import com.android.launcher3.shortcuts.ShortcutRequest;
 import com.android.launcher3.shortcuts.ShortcutRequest.QueryResult;
@@ -245,8 +246,13 @@ public class LoaderTask implements Runnable {
             logASplit(logger, "loadAllApps");
 
             verifyNotStopped();
-            mResults.bindAllApps();
-            logASplit(logger, "bindAllApps");
+            if (MxSettings.getInstance().isDrawerEnable()) {
+                mResults.bindAllApps();
+                logASplit(logger, "bindAllApps");
+            } else {
+                mResults.bindAllAppToWorkspace();
+                logASplit(logger, "bindAllAppToWorkspace");
+            }
 
             verifyNotStopped();
             IconCacheUpdateHandler updateHandler = mIconCache.getUpdateHandler();

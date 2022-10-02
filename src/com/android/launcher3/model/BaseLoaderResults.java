@@ -16,10 +16,6 @@
 
 package com.android.launcher3.model;
 
-import static com.android.launcher3.model.ItemInstallQueue.FLAG_LOADER_RUNNING;
-import static com.android.launcher3.model.ModelUtils.filterCurrentWorkspaceItems;
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
-
 import android.os.Process;
 import android.util.Log;
 
@@ -46,6 +42,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
+import static com.android.launcher3.model.ItemInstallQueue.FLAG_LOADER_RUNNING;
+import static com.android.launcher3.model.ModelUtils.filterCurrentWorkspaceItems;
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
+
 /**
  * Base Helper class to handle results of {@link com.android.launcher3.model.LoaderTask}.
  */
@@ -53,13 +53,13 @@ public abstract class BaseLoaderResults {
 
     protected static final String TAG = "LoaderResults";
     protected static final int INVALID_SCREEN_ID = -1;
-    private static final int ITEMS_CHUNK = 6; // batch size for the workspace icons
+    protected static final int ITEMS_CHUNK = 6; // batch size for the workspace icons
 
     protected final LooperExecutor mUiExecutor;
 
     protected final LauncherAppState mApp;
     protected final BgDataModel mBgDataModel;
-    private final AllAppsList mBgAllAppsList;
+    protected final AllAppsList mBgAllAppsList;
 
     private final Callbacks[] mCallbacksList;
 
@@ -109,6 +109,8 @@ public abstract class BaseLoaderResults {
         int flags = mBgAllAppsList.getFlags();
         executeCallbacksTask(c -> c.bindAllApplications(apps, flags), mUiExecutor);
     }
+
+    public abstract void bindAllAppToWorkspace();
 
     public abstract void bindWidgets();
 

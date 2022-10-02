@@ -52,6 +52,10 @@ public class ComponentKey {
         return other.componentName.equals(componentName) && other.user.equals(user);
     }
 
+    public boolean equals(ComponentName componentName, UserHandle user) {
+        return componentName.equals(this.componentName) && user.equals(this.user);
+    }
+
     /**
      * Encodes a component key as a string of the form [flattenedComponentString#userId].
      */

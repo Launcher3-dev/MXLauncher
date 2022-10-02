@@ -16,13 +16,6 @@
 
 package com.android.launcher3.icons;
 
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
-import static com.android.launcher3.widget.WidgetSections.NO_CATEGORY;
-
-import static java.util.stream.Collectors.groupingBy;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +69,12 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
+import static com.android.launcher3.widget.WidgetSections.NO_CATEGORY;
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Cache of application icons.  Icons can be made from any thread.
@@ -147,7 +146,7 @@ public class IconCache extends BaseIconCache {
                         false /*replace existing*/);
             }
         } catch (NameNotFoundException e) {
-            Log.d(TAG, "Package not found", e);
+            Log.d(TAG, "Package { " + packageName + " } not found", e);
         }
     }
 

@@ -16,13 +16,6 @@
 
 package com.android.launcher3;
 
-import static android.app.admin.DevicePolicyManager.ACTION_DEVICE_POLICY_RESOURCE_UPDATED;
-
-import static com.android.launcher3.LauncherAppState.ACTION_FORCE_ROLOAD;
-import static com.android.launcher3.config.FeatureFlags.IS_STUDIO_BUILD;
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LauncherApps;
@@ -39,6 +32,7 @@ import androidx.annotation.WorkerThread;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.icons.IconCache;
 import com.android.launcher3.logging.FileLog;
+import com.android.launcher3.model.AddAllAppsWorkspaceItemsTask;
 import com.android.launcher3.model.AddWorkspaceItemsTask;
 import com.android.launcher3.model.AllAppsList;
 import com.android.launcher3.model.BaseModelUpdateTask;
@@ -78,6 +72,12 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import static android.app.admin.DevicePolicyManager.ACTION_DEVICE_POLICY_RESOURCE_UPDATED;
+import static com.android.launcher3.LauncherAppState.ACTION_FORCE_ROLOAD;
+import static com.android.launcher3.config.FeatureFlags.IS_STUDIO_BUILD;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
+import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
 
 /**
  * Maintains in-memory state of the Launcher. It is expected that there should be only one
@@ -150,6 +150,15 @@ public class LauncherModel extends LauncherApps.Callback implements InstallSessi
             cb.preAddApps();
         }
         enqueueModelUpdateTask(new AddWorkspaceItemsTask(itemList));
+    }
+
+    public void addAndBindAllAddedWorkspaceItems(ArrayList<AppInfo> itemList) {
+        for (Callbacks cb : getCallbacks()) {
+            cb.preAddApps();
+        }
+        ModelUpdateTask task = new AddAllAppsWorkspaceItemsTask(itemList);
+        task.init(mApp, this, mBgDataModel, mBgAllAppsList, MAIN_EXECUTOR);
+        MODEL_EXECUTOR.execute(task);
     }
 
     public ModelWriter getWriter(boolean hasVerticalHotseat, boolean verifyChanges,

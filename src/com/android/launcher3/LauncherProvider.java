@@ -424,7 +424,7 @@ public class LauncherProvider extends ContentProvider {
             }
             case LauncherSettings.Settings.METHOD_REFRESH_HOTSEAT_RESTORE_TABLE: {
                 mOpenHelper.mHotseatRestoreTableExists = tableExists(
-                        mOpenHelper.getReadableDatabase(), Favorites.HYBRID_HOTSEAT_BACKUP_TABLE);
+                        mOpenHelper.getReadableDatabase(), Favorites.getHotseatBackTableName());
                 return null;
             }
             case LauncherSettings.Settings.METHOD_RESTORE_BACKUP_TABLE: {
@@ -664,7 +664,7 @@ public class LauncherProvider extends ContentProvider {
                 databaseHelper.addFavoritesTable(databaseHelper.getWritableDatabase(), true);
             }
             databaseHelper.mHotseatRestoreTableExists = tableExists(
-                    databaseHelper.getReadableDatabase(), Favorites.HYBRID_HOTSEAT_BACKUP_TABLE);
+                    databaseHelper.getReadableDatabase(), Favorites.getHotseatBackTableName());
 
             databaseHelper.initIds();
             return databaseHelper;
@@ -708,7 +708,7 @@ public class LauncherProvider extends ContentProvider {
                 mBackupTableExists = false;
             }
             if (mHotseatRestoreTableExists) {
-                dropTable(db, Favorites.HYBRID_HOTSEAT_BACKUP_TABLE);
+                dropTable(db, Favorites.getHotseatBackTableName());
                 mHotseatRestoreTableExists = false;
             }
         }
@@ -770,7 +770,7 @@ public class LauncherProvider extends ContentProvider {
             UserCache um = UserCache.INSTANCE.get(mContext);
             for (UserHandle user : um.getUserProfiles()) {
                 long serial = um.getSerialNumberForUser(user);
-                String sql = "update favorites set intent = replace(intent, "
+                String sql = "update " + Favorites.getFavoritesTableName() + " set intent = replace(intent, "
                         + "';l.profile=" + serial + ";', ';') where itemType = 0;";
                 db.execSQL(sql);
             }

@@ -46,7 +46,7 @@ class WorkspaceItemSpaceFinderTest : AbstractWorkspaceModelTest() {
     private fun findSpace(spanX: Int, spanY: Int): NewItemSpace =
         mItemSpaceFinder.findSpaceForItem(
             mAppState, mModelHelper.bgDataModel,
-            mExistingScreens, mNewScreens, spanX, spanY
+            mExistingScreens, mNewScreens, spanX, spanY, true
         )
             .let { NewItemSpace.fromIntArray(it) }
 

@@ -131,8 +131,8 @@ public class LauncherSettings {
          */
         public static final String ICON = "icon";
 
-        public static final String TABLE_NAME = "favorites";
-        public static final String TABLE_NAME_ALL = "favorites_all";
+        private static final String TABLE_NAME = "favorites";
+        private static final String TABLE_NAME_ALL = "favorites_all";
 
         public static String getFavoritesTableName() {
             return MxSettings.getInstance().isDrawerEnable() ? TABLE_NAME : TABLE_NAME_ALL;
@@ -149,6 +149,10 @@ public class LauncherSettings {
          */
         public static final String HYBRID_HOTSEAT_BACKUP_TABLE = "hotseat_restore_backup";
         public static final String HYBRID_HOTSEAT_BACKUP_TABLE_ALL = "hotseat_restore_all_backup";
+
+        public static String getHotseatBackTableName() {
+            return MxSettings.getInstance().isDrawerEnable() ? HYBRID_HOTSEAT_BACKUP_TABLE : HYBRID_HOTSEAT_BACKUP_TABLE_ALL;
+        }
 
         /**
          * Temporary table used specifically for grid migrations during wallpaper preview
@@ -350,7 +354,7 @@ public class LauncherSettings {
         public static final String APPWIDGET_SOURCE = "appWidgetSource";
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional) {
-            addTableToDb(db, myProfileId, optional, TABLE_NAME);
+            addTableToDb(db, myProfileId, optional, getFavoritesTableName());
         }
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional,

@@ -15,8 +15,6 @@
  */
 package com.android.launcher3.model;
 
-import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
-
 import android.util.LongSparseArray;
 
 import com.android.launcher3.InvariantDeviceProfile;
@@ -30,6 +28,8 @@ import com.android.launcher3.util.IntSet;
 
 import java.util.ArrayList;
 
+import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
+
 /**
  * Utility class to help find space for new workspace items
  */
@@ -41,7 +41,8 @@ public class WorkspaceItemSpaceFinder {
      * @return screenId and the coordinates for the item in an int array of size 3.
      */
     public int[] findSpaceForItem(LauncherAppState app, BgDataModel dataModel,
-            IntArray workspaceScreens, IntArray addedWorkspaceScreensFinal, int spanX, int spanY) {
+            IntArray workspaceScreens, IntArray addedWorkspaceScreensFinal, int spanX, int spanY,
+                                  boolean skipFirstScreen) {
         LongSparseArray<ArrayList<ItemInfo>> screenItems = new LongSparseArray<>();
 
         // Use sBgItemsIdMap as all the items are already loaded.
@@ -70,7 +71,7 @@ public class WorkspaceItemSpaceFinder {
             screensToExclude.add(FIRST_SCREEN_ID);
         }
 
-        for (int screen = 0; screen < screenCount; screen++) {
+        for (int screen = skipFirstScreen ? 1 : 0; screen < screenCount; screen++) {
             screenId = workspaceScreens.get(screen);
             if (!screensToExclude.contains(screenId) && findNextAvailableIconSpaceInScreen(
                     app, screenItems.get(screenId), coordinates, spanX, spanY)) {
