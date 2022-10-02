@@ -90,12 +90,10 @@ public class DefaultLayoutParser extends AutoInstallsLayout {
     protected void parseContainerAndScreen(XmlPullParser parser, int[] out) {
         out[0] = LauncherSettings.Favorites.CONTAINER_DESKTOP;
         String strContainer = getAttributeValue(parser, ATTR_CONTAINER);
-        Log.d(TAG, "parseContainerAndScreen: strContainer: " + strContainer);
         if (strContainer != null) {
             out[0] = Integer.parseInt(strContainer);
         }
         String strScreen = getAttributeValue(parser, ATTR_SCREEN);
-        Log.d(TAG, "parseContainerAndScreen: screen: " + strScreen);
         if (strScreen != null) {
             out[1] = Integer.parseInt(getAttributeValue(parser, ATTR_SCREEN));
         }

@@ -565,7 +565,6 @@ public class LauncherProvider extends ContentProvider {
             }
 
             Log.d(TAG, "loadDefaultFavoritesIfNecessary: usingExternallyProvidedLayout: " + usingExternallyProvidedLayout);
-            Log.d(TAG, "loadDefaultFavoritesIfNecessary: loader: " + loader);
 
             // There might be some partially restored DB items, due to buggy restore logic in
             // previous versions of launcher.
@@ -640,13 +639,11 @@ public class LauncherProvider extends ContentProvider {
         InvariantDeviceProfile idp = LauncherAppState.getIDP(getContext());
         int defaultLayout = mUseTestWorkspaceLayout
                 ? TEST_WORKSPACE_LAYOUT_RES_XML : idp.defaultLayoutId;
-        Log.d(TAG, "getDefaultLayoutParser:defaultLayout: " + defaultLayout);
 
         if (getContext().getSystemService(UserManager.class).isDemoUser()
                 && idp.demoModeLayoutId != 0) {
             defaultLayout = idp.demoModeLayoutId;
         }
-        Log.d(TAG, "getDefaultLayoutParser:defaultLayout22222: " + defaultLayout);
         return new DefaultLayoutParser(getContext(), widgetHost,
                 mOpenHelper, getContext().getResources(), defaultLayout);
     }
@@ -747,11 +744,9 @@ public class LauncherProvider extends ContentProvider {
          * Overriden in tests.
          */
         protected void onEmptyDbCreated() {
-            Log.d(TAG, "onEmptyDbCreated: ");
+            Log.d(TAG, "onEmptyDbCreated: " + getKey(getEmptyDatabaseCreated()));
             // Set the flag for empty DB
-            Utilities.getPrefs(mContext).edit().putBoolean(getKey(EMPTY_DATABASE_CREATED), true)
-                    .commit();
-            Utilities.getPrefs(mContext).edit().putBoolean(getKey(EMPTY_DATABASE_CREATED_ALL), true)
+            Utilities.getPrefs(mContext).edit().putBoolean(getKey(getEmptyDatabaseCreated()), true)
                     .commit();
         }
 
