@@ -1006,7 +1006,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         // Set the notification listener and fetch updated notifications when we resume
         NotificationListener.addNotificationsChangedListener(mPopupDataProvider);
 
-        DiscoveryBounce.showForHomeIfNeeded(this);
+        if (MxSettings.getInstance().isDrawerEnable()) {
+            DiscoveryBounce.showForHomeIfNeeded(this);
+        }
         mAppWidgetHost.setActivityResumed(true);
     }
 
