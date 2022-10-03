@@ -23,5 +23,5 @@ jobs:
       - name: Releasing using Hub
         uses: Launcher3-dev/MXLauncher@dev
         env:
-          GITHUB——TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           APP_FOLDER: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
