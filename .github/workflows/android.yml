@@ -27,29 +27,29 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleAospWithoutQuickstep
 
-#      - name: Releasing using Hub
-#        uses: Launcher3-dev/MXLauncher@dev
+      - name: Releasing using Hub
+        uses: Launcher3-dev/MXLauncher@dev
+        env:
+          GITHUB_TOKEN: ${{ secrets.MX_TOKEN }}
+          APP_FOLDER: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
+
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.MX_TOKEN }}
-#          APP_FOLDER: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MX_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          prerelease: false
-
-      - name: Upload app
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MX_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
-          asset_name: MXLauncher-aosp-withoutQuickstep-debug.apk
-          asset_content_type: application/vnd.android.package-archive
+#        with:
+#          tag_name: ${{ github.ref }}
+#          release_name: ${{ github.ref }}
+#          draft: true
+#          prerelease: false
+#
+#      - name: Upload app
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.MX_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
+#          asset_name: MXLauncher-aosp-withoutQuickstep-debug.apk
+#          asset_content_type: application/vnd.android.package-archive
