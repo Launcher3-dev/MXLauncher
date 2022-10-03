@@ -3,8 +3,11 @@ name: Build & Publish Debug APK
 on:
   push:
     branches: [ "dev" ]
+#    tags:
+#      - '*'
   pull_request:
     branches: [ "dev" ]
+
 
 jobs:
   Gradle:
@@ -12,12 +15,12 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v2
-      - name: Setup JDK
+      - name: setup jdk
         uses: actions/setup-java@v1
         with:
-          java-version: '11'
+          java-version: 11
       - name: Make Gradle executable
-        run: chmod +x gradlew
+        run: chmod +x ./gradlew
       - name: Build APK
         run: ./gradlew assembleAospWithoutQuickstep
       - name: Releasing using Hub
