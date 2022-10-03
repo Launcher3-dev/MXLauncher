@@ -92,7 +92,7 @@ jobs:
 #         path: KeyStore # 仓库的根目录名
      # 打包release
      - name: Build with Gradle
-       run: bash ./gradlew assembleWithoutQuickstep
+       run: bash ./gradlew assembleAospWithoutQuickstep
 #     # 创建release
 #     - name: Create Release
 #       id: create_release

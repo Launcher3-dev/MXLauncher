@@ -77,6 +77,7 @@ public class LoaderResults extends BaseLoaderResults {
         executeCallbacksTask(c -> c.bindAllWidgets(widgets), mUiExecutor);
     }
 
+    @Override
     public void finishBindAllApps(LauncherModel model) {
         Log.d(TAG, "finishBindAllApps");
         if (MxSettings.getInstance().isDrawerEnable()) {

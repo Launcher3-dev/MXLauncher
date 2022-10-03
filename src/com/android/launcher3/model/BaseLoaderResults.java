@@ -21,6 +21,7 @@ import android.util.Log;
 
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherAppState;
+import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherModel.CallbackTask;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.config.FeatureFlags;
@@ -115,6 +116,8 @@ public abstract class BaseLoaderResults {
     public abstract void bindAllAppToWorkspace();
 
     public abstract void bindWidgets();
+
+    public abstract void finishBindAllApps(LauncherModel model);
 
     /**
      * Sorts the set of items by hotseat, workspace (spatially from top to bottom, left to right)

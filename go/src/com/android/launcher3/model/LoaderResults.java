@@ -16,10 +16,11 @@
 
 package com.android.launcher3.model;
 
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
-
 import com.android.launcher3.LauncherAppState;
+import com.android.launcher3.LauncherModel;
 import com.android.launcher3.model.BgDataModel.Callbacks;
+
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 /**
  * Helper class to handle results of {@link com.android.launcher3.model.LoaderTask}.
@@ -36,6 +37,18 @@ public class LoaderResults extends BaseLoaderResults {
     }
 
     @Override
+    public void bindAllAppToWorkspace() {
+
+    }
+
+    @Override
     public void bindWidgets() {
     }
+
+    @Override
+    public void finishBindAllApps(LauncherModel model) {
+
+    }
+
+
 }
