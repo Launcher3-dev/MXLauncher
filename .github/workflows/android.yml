@@ -14,17 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
       - name: setup jdk
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
           java-version: 11
+
       - name: Make Gradle executable
         run: chmod +x ./gradlew
+
       - name: Build APK
         run: ./gradlew assembleAospWithoutQuickstep
-      - name: Releasing using Hub
-        uses: Launcher3-dev/MXLauncher@dev
+
+#      - name: Releasing using Hub
+#        uses: Launcher3-dev/MXLauncher@dev
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#          APP_FOLDER: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-          APP_FOLDER: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+      - name: Upload app
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk
+          asset_name: MXLauncher-aosp-withoutQuickstep-debug.apk
+          asset_content_type: application/vnd.android.package-archive
