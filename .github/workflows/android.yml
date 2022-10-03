@@ -128,7 +128,7 @@ jobs:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
        with:
          upload_url: ${{ steps.create_release.outputs.upload_url }} # 上传网址，无需改动
-         asset_path: app/build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk # 上传路径
+         asset_path: build/outputs/apk/aospWithoutQuickstep/debug/MXLauncher-aosp-withoutQuickstep-debug.apk # 上传路径
          asset_name: LightTimetable-${{steps.get-version.outputs.result}}.apk # 资源名
          asset_content_type: application/vnd.android.package-archiv #资源类型
      # 存档打包的文件
