@@ -61,6 +61,8 @@ import java.util.function.Supplier;
  */
 public class AutoInstallsLayout {
     private static final String TAG = "AutoInstalls";
+
+    private static final String NAME_SPACE = "http://schemas.android.com/apk/res-auto";
     private static final boolean LOGD = false;
 
     /** Marker action used to discover a package which defines launcher customization */
@@ -688,7 +690,7 @@ public class AutoInstallsLayout {
      */
     protected static String getAttributeValue(XmlPullParser parser, String attribute) {
         String value = parser.getAttributeValue(
-                "http://schemas.android.com/apk/res-auto", attribute);
+                NAME_SPACE, attribute);
         if (value == null) {
             value = parser.getAttributeValue(null, attribute);
         }
@@ -703,7 +705,7 @@ public class AutoInstallsLayout {
             int defaultValue) {
         AttributeSet attrs = Xml.asAttributeSet(parser);
         int value = attrs.getAttributeResourceValue(
-                "http://schemas.android.com/apk/res-auto", attribute,
+                NAME_SPACE, attribute,
                 defaultValue);
         if (value == defaultValue) {
             value = attrs.getAttributeResourceValue(null, attribute, defaultValue);

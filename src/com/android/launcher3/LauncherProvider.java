@@ -746,7 +746,9 @@ public class LauncherProvider extends ContentProvider {
         protected void onEmptyDbCreated() {
             Log.d(TAG, "onEmptyDbCreated: " + getKey(getEmptyDatabaseCreated()));
             // Set the flag for empty DB
-            Utilities.getPrefs(mContext).edit().putBoolean(getKey(getEmptyDatabaseCreated()), true)
+            Utilities.getPrefs(mContext).edit().putBoolean(getKey(EMPTY_DATABASE_CREATED), true)
+                    .commit();
+            Utilities.getPrefs(mContext).edit().putBoolean(getKey(EMPTY_DATABASE_CREATED_ALL), true)
                     .commit();
         }
 
