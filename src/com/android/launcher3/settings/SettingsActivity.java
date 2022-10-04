@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -36,6 +37,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartFragmentCal
 import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallback;
 import androidx.preference.PreferenceGroup.PreferencePositionCallback;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SwitchPreference;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.DeviceProfile;
@@ -185,6 +187,8 @@ public class SettingsActivity extends FragmentActivity
      */
     public static class LauncherSettingsFragment extends PreferenceFragmentCompat {
 
+        private static final String TAG = "LauncherSettingsFragment";
+
         private String mHighLightKey;
         private boolean mPreferenceHighlighted = false;
         private Preference mDeveloperOptionPref;
@@ -256,6 +260,7 @@ public class SettingsActivity extends FragmentActivity
          * will remove that preference from the list.
          */
         protected boolean initPreference(Preference preference) {
+            Log.d(TAG, "initPreference: key: " + preference.getKey());
             switch (preference.getKey()) {
                 case NOTIFICATION_DOTS_PREFERENCE_KEY:
                     return !WidgetsModel.GO_DISABLE_NOTIFICATION_DOTS;
@@ -280,16 +285,17 @@ public class SettingsActivity extends FragmentActivity
                     mDeveloperOptionPref = preference;
                     return updateDeveloperOption();
                 case LauncherSpUtil.PREF_DRAWER_ENABLE:
-                    mDrawerEnablePref = preference;
-                    updateDrawerEnable();
+                    preference.setDefaultValue(MxSettings.getInstance().isDrawerEnable());
+                    ((SwitchPreference)preference).setChecked(MxSettings.getInstance().isDrawerEnable());
+                    updateDrawerEnable(preference);
                     return true;
             }
 
             return true;
         }
 
-        private void updateDrawerEnable() {
-            mDrawerEnablePref.setOnPreferenceChangeListener((preference, newValue) -> {
+        private void updateDrawerEnable(Preference preference) {
+            preference.setOnPreferenceChangeListener((newPreference, newValue) -> {
                 MxSettings.getInstance().setDrawerEnable((Boolean) newValue);
                 return true;
             });

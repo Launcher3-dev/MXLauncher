@@ -1,5 +1,7 @@
 package com.android.launcher3.settings;
 
+import android.util.Log;
+
 import com.android.launcher3.Launcher;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.util.LauncherSpUtil;
@@ -53,6 +55,7 @@ public final class MxSettings {
 
     public void setDrawerEnable(boolean drawerEnable) {
         isDrawerEnable = drawerEnable;
+        LauncherSpUtil.saveBooleanData(mLauncher, LauncherSpUtil.PREF_DRAWER_ENABLE, drawerEnable);
         mLauncher.getModel().forceReload();
     }
 
