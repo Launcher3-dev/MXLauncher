@@ -314,9 +314,7 @@ public class LoaderTask implements Runnable {
                 loadFolderNames();
             }
 
-            if (!MxSettings.getInstance().isDrawerEnable()) {
-                mResults.finishBindAllApps(mApp.getModel());
-            }
+            mResults.finishBindAllApps(mApp.getModel());
 
             verifyNotStopped();
             updateHandler.finish();

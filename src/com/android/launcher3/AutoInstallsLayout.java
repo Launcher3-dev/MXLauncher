@@ -703,7 +703,7 @@ public class AutoInstallsLayout {
             int defaultValue) {
         AttributeSet attrs = Xml.asAttributeSet(parser);
         int value = attrs.getAttributeResourceValue(
-                "http://schemas.android.com/apk/res-auto/com.android.launcher3", attribute,
+                "http://schemas.android.com/apk/res-auto", attribute,
                 defaultValue);
         if (value == defaultValue) {
             value = attrs.getAttributeResourceValue(null, attribute, defaultValue);

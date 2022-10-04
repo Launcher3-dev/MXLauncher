@@ -60,9 +60,9 @@
         android:key="pref_drawer_enable"
         android:title="@string/drawer_enable"
         android:summary="@string/drawer_enable_des"
-        android:defaultValue="false"
+        android:defaultValue="ture"
         android:persistent="true"
-        launcher:logIdOn="615"
-        launcher:logIdOff="616" />
+        launcher:logIdOn="617"
+        launcher:logIdOff="618" />
 
 </androidx.preference.PreferenceScreen>
