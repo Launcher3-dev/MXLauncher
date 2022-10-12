@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Build;
 import android.os.UserHandle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 
 import androidx.annotation.NonNull;
@@ -40,6 +41,8 @@ import static com.android.launcher3.icons.ShadowGenerator.BLUR_FACTOR;
  * this package.
  */
 public class BaseIconFactory implements AutoCloseable {
+
+    private static final String TAG = "Launcher.BaseIconFactory";
 
     private static final int DEFAULT_WRAPPER_BACKGROUND = Color.WHITE;
 
@@ -183,6 +186,7 @@ public class BaseIconFactory implements AutoCloseable {
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
     public BitmapInfo createBadgedIconBitmap(@NonNull Drawable icon,
             @Nullable IconOptions options) {
+        Log.d(TAG, "createBadgedIconBitmap: ");
         boolean shrinkNonAdaptiveIcons = options == null || options.mShrinkNonAdaptiveIcons;
         float[] scale = new float[1];
         icon = normalizeAndWrapToAdaptiveIcon(icon, shrinkNonAdaptiveIcons, null, scale);
@@ -273,7 +277,8 @@ public class BaseIconFactory implements AutoCloseable {
     }
 
     /**
-     * Disables the dominant color extraction for all icons loaded.
+     * Disables the dominant(显性的) color extraction for all icons loaded.
+     * 默认图标白色背景
      */
     public void disableColorExtraction() {
         mDisableColorExtractor = true;
@@ -281,6 +286,9 @@ public class BaseIconFactory implements AutoCloseable {
 
     protected Drawable normalizeAndWrapToAdaptiveIcon(@NonNull Drawable icon,
             boolean shrinkNonAdaptiveIcons, RectF outIconBounds, float[] outScale) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: shrinkNonAdaptiveIcons: " + shrinkNonAdaptiveIcons);
+        }
         if (icon == null) {
             return null;
         }
@@ -301,10 +309,17 @@ public class BaseIconFactory implements AutoCloseable {
                 fsd.setScale(scale);
                 icon = dr;
                 scale = getNormalizer().getScale(icon, outIconBounds, null, null);
+                // 设置图标默认背景色
                 ((ColorDrawable) dr.getBackground()).setColor(mWrapperBackgroundColor);
+            }
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: scale---: " + scale);
             }
         } else {
             scale = getNormalizer().getScale(icon, outIconBounds, null, null);
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: scale===: " + scale);
+            }
         }
 
         outScale[0] = scale;
@@ -323,6 +338,14 @@ public class BaseIconFactory implements AutoCloseable {
         return createIconBitmap(icon, scale, size, Bitmap.Config.ARGB_8888);
     }
 
+    /**
+     * 创建图标的Bitmap对象，这里可以设置图标Bitmap的形状（方形或者圆形等）
+     * @param icon
+     * @param scale
+     * @param size
+     * @param config
+     * @return
+     */
     protected Bitmap createIconBitmap(@NonNull Drawable icon, float scale, int size,
             Bitmap.Config config) {
         Bitmap bitmap = Bitmap.createBitmap(size, size, config);
@@ -346,6 +369,7 @@ public class BaseIconFactory implements AutoCloseable {
                 icon.draw(mCanvas);
             }
             mCanvas.restoreToCount(count);
+            // 可以在这里修改Bitmap的形状
         } else {
             if (icon instanceof BitmapDrawable) {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) icon;

@@ -627,6 +627,7 @@ public class LoaderTask implements Runnable {
                                         != LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
                                     // Skip deep shortcuts; their title and icons have already been
                                     // loaded above.
+                                    // 添加创建应用图标的请求对象到请求列表
                                     iconRequestInfos.add(
                                             c.createIconRequestInfo(info, useLowResIcon));
                                 }
@@ -849,6 +850,7 @@ public class LoaderTask implements Runnable {
                         Log.e(TAG, "Desktop items loading interrupted", e);
                     }
                 }
+                // 根据请求列表获取应用的标题和Icon
                 if (FeatureFlags.ENABLE_BULK_WORKSPACE_ICON_LOADING.get()) {
                     Trace.beginSection("LoadWorkspaceIconsInBulk");
                     try {
@@ -981,6 +983,7 @@ public class LoaderTask implements Runnable {
                 return allActivityList;
             }
             boolean quietMode = mUserManagerState.isUserQuiet(user);
+            Log.d(TAG, "loadAllApps: " + !FeatureFlags.ENABLE_BULK_ALL_APPS_ICON_LOADING.get());
             // Create the ApplicationInfos
             for (int i = 0; i < apps.size(); i++) {
                 LauncherActivityInfo app = apps.get(i);

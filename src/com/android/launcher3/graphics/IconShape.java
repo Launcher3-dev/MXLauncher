@@ -15,8 +15,6 @@
  */
 package com.android.launcher3.graphics;
 
-import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.FloatArrayEvaluator;
@@ -37,6 +35,7 @@ import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -54,10 +53,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
+
 /**
  * Abstract representation of the shape of an icon shape
  */
 public abstract class IconShape {
+
+    private static final String TAG = "Launcher.IconShape";
 
     private static IconShape sInstance = new Circle();
     private static float sNormalizationScale = ICON_VISIBLE_AREA_FACTOR;
@@ -446,7 +449,8 @@ public abstract class IconShape {
         // Find the shape with minimum area of divergent region.
         int minArea = Integer.MAX_VALUE;
         IconShape closestShape = null;
-        for (IconShape shape : getAllShapes(context)) {
+        final List<IconShape> shapeList = getAllShapes(context);
+        for (IconShape shape : shapeList) {
             shapePath.reset();
             shape.addToPath(shapePath, 0, 0, size / 2f);
             shapeR.setPath(shapePath, full);
@@ -462,6 +466,7 @@ public abstract class IconShape {
         if (closestShape != null) {
             sInstance = closestShape;
         }
+        Log.d(TAG, "pickBestShape: closestShape: " + closestShape);
 
         // Initialize shape properties
         sNormalizationScale = IconNormalizer.normalizeAdaptiveIcon(drawable, size, null);
