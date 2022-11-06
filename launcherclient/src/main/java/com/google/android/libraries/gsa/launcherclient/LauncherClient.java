@@ -2,30 +2,32 @@ package com.google.android.libraries.gsa.launcherclient;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Point;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Process;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.android.launcherclient.Constant;
-import com.google.android.libraries.launcherclient.ILauncherOverlayCallbackSub;
 import com.google.android.libraries.launcherclient.ILauncherOverlay;
+import com.google.android.libraries.launcherclient.ILauncherOverlayCallback;
 
 import java.io.PrintWriter;
 
 public class LauncherClient {
+
+    public static final String TAG = "Launcher.LauncherClient";
 
     private static int sServiceVersion = -1;
     public final Activity mActivity;
@@ -70,10 +72,11 @@ public class LauncherClient {
     }
 
     public LauncherClient(Activity activity, LauncherClientCallbacks launcherClientCallbacks) {
-        this(activity, launcherClientCallbacks, new ClientOptions(true, true, true));
+        this(activity, launcherClientCallbacks,
+                new ClientOptions(true, true, true));
     }
 
-    private static class OverlayCallbacks extends ILauncherOverlayCallbackSub implements Handler.Callback {
+    private static class OverlayCallbacks extends ILauncherOverlayCallback.Stub implements Handler.Callback {
 
         private final Handler mUIHandler = new Handler(Looper.getMainLooper(), this);
 
@@ -121,6 +124,7 @@ public class LauncherClient {
             if (mClient == null) {
                 return true;
             }
+            Log.d(TAG, "handleMessage: " + message.what);
             switch (message.what) {
                 case 2:
                     if ((mClient.mServiceStatus & 1) != 0) {
@@ -160,7 +164,8 @@ public class LauncherClient {
         }
     }
 
-    public LauncherClient(Activity activity, LauncherClientCallbacks launcherClientCallbacks, ClientOptions clientOptions) {
+    public LauncherClient(Activity activity, LauncherClientCallbacks launcherClientCallbacks,
+                          ClientOptions clientOptions) {
         mClientLog = new EventLogArray("Client", 20);
         mServiceLog = new EventLogArray("Service", 10);
         mUpdateReceiver = new UpdateReceiver(this);
@@ -169,7 +174,7 @@ public class LauncherClient {
         mServiceStatus = 0;
         mActivity = activity;
         mLauncherClientCallbacks = launcherClientCallbacks;
-        mSimpleServiceConnection = new SimpleServiceConnection(activity, 65);
+        mSimpleServiceConnection = new SimpleServiceConnection(activity, Context.BIND_AUTO_CREATE);
         mServiceConnectionOptions = clientOptions.f19a;
         sApplicationConnection = AppServiceConnection.getInstance(activity);
         mOverlay = sApplicationConnection.registerLauncherClient(this);
@@ -191,6 +196,7 @@ public class LauncherClient {
     }
 
     public final void onAttachedToWindow() {
+        Log.d(TAG, "onAttachedToWindow # mDestroyed: " + mDestroyed);
         if (!mDestroyed) {
             mClientLog.print("attachedToWindow");
             setWindowAttrs(mActivity.getWindow().getAttributes());
@@ -198,21 +204,23 @@ public class LauncherClient {
     }
 
     public final void onDetachedFromWindow() {
+        Log.d(TAG, "onDetachedFromWindow: " + mDestroyed);
         if (!mDestroyed) {
             mClientLog.print("detachedFromWindow");
-            setWindowAttrs((WindowManager.LayoutParams) null);
+            setWindowAttrs(null);
         }
     }
 
     public void onResume() {
+        Log.d(TAG, "onResume: " + mDestroyed);
         if (!mDestroyed) {
             mState |= 2;
             if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
                     if (sServiceVersion < 4) {
-                        mOverlay.mo19d();
+                        mOverlay.onResume();
                     } else {
-                        mOverlay.mo15b(mState);
+                        mOverlay.onStart(mState);
                     }
                 } catch (RemoteException e) {
                 }
@@ -227,9 +235,9 @@ public class LauncherClient {
             if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
                     if (sServiceVersion < 4) {
-                        mOverlay.mo17c();
+                        mOverlay.onPause();
                     } else {
-                        mOverlay.mo15b(mState);
+                        mOverlay.onStart(mState);
                     }
                 } catch (RemoteException e) {
                 }
@@ -245,7 +253,7 @@ public class LauncherClient {
             mState |= 1;
             if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
-                    mOverlay.mo15b(mState);
+                    mOverlay.onStart(mState);
                 } catch (RemoteException e) {
                 }
             }
@@ -260,7 +268,7 @@ public class LauncherClient {
             mState &= -2;
             if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
-                    mOverlay.mo15b(mState);
+                    mOverlay.onStart(mState);
                 } catch (RemoteException e) {
                 }
             }
@@ -287,6 +295,7 @@ public class LauncherClient {
     }
 
     private void disconnect(boolean unbindService) {
+        Log.d(TAG, "disconnect: " + unbindService);
         if (!mDestroyed) {
             mActivity.unregisterReceiver(mUpdateReceiver);
         }
@@ -300,6 +309,7 @@ public class LauncherClient {
     }
 
     public void reconnect() {
+        Log.d(TAG, "reconnect: " + mDestroyed);
         if (!mDestroyed) {
             if (!sApplicationConnection.reconnect() || !mSimpleServiceConnection.reconnect()) {
                 mActivity.runOnUiThread(new NotifyStatusRunnable(this));
@@ -307,7 +317,8 @@ public class LauncherClient {
         }
     }
 
-    private final void setWindowAttrs(WindowManager.LayoutParams layoutParams) {
+    private void setWindowAttrs(WindowManager.LayoutParams layoutParams) {
+        Log.d(TAG, "setWindowAttrs: " + layoutParams);
         if (mWindowAttrs != layoutParams) {
             mWindowAttrs = layoutParams;
             if (mWindowAttrs != null) {
@@ -323,7 +334,9 @@ public class LauncherClient {
         }
     }
 
-    private final void applyWindowToken() {
+    private void applyWindowToken() {
+        Log.d(TAG, "applyWindowToken: " + (mOverlay != null) + " ,sServiceVersion: " + sServiceVersion);
+        Log.d(TAG, "applyWindowToken: " + mOverlay);
         if (mOverlay != null) {
             try {
                 if (mCurrentCallbacks == null) {
@@ -331,7 +344,9 @@ public class LauncherClient {
                 }
                 mCurrentCallbacks.setClient(this);
                 if (sServiceVersion < 3) {
-                    mOverlay.windowAttached(mWindowAttrs, mCurrentCallbacks, mServiceConnectionOptions);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("layout_params", mWindowAttrs);
+                    mOverlay.windowAttached(bundle, mCurrentCallbacks, mServiceConnectionOptions);
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("layout_params", mWindowAttrs);
@@ -340,11 +355,11 @@ public class LauncherClient {
                     mOverlay.windowAttached2(bundle, mCurrentCallbacks);
                 }
                 if (sServiceVersion >= 4) {
-                    mOverlay.mo15b(mState);
+                    mOverlay.onStart(mState);
                 } else if ((mState & 2) != 0) {
-                    mOverlay.mo19d();
+                    mOverlay.onResume();
                 } else {
-                    mOverlay.mo17c();
+                    mOverlay.onPause();
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -352,7 +367,7 @@ public class LauncherClient {
         }
     }
 
-    private final boolean isConnected() {
+    private boolean isConnected() {
         return mOverlay != null;
     }
 
@@ -379,6 +394,7 @@ public class LauncherClient {
     }
 
     public void updateMove(float progressX) {
+        Log.d(TAG, "updateMove: " + progressX);
         mClientLog.print("updateMove", progressX);
         if (isConnected()) {
             try {
@@ -442,11 +458,11 @@ public class LauncherClient {
         }
     }
 
-    public void requestHotwordDetection(boolean z) {
-        mClientLog.print("requestHotwordDetection", z);
+    public void requestHotwordDetection(boolean start) {
+        mClientLog.print("requestHotwordDetection", start);
         if (mOverlay != null) {
             try {
-                mOverlay.requestVoiceDetection(z);
+                mOverlay.requestVoiceDetection(start);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -461,6 +477,7 @@ public class LauncherClient {
     }
 
     public final void setLauncherOverlay(ILauncherOverlay overlay) {
+        Log.d(TAG, "setLauncherOverlay: " + overlay);
         mServiceLog.print("Connected", overlay != null);
         mOverlay = overlay;
         if (mOverlay == null) {
@@ -471,13 +488,14 @@ public class LauncherClient {
     }
 
     public final void notifyStatusChanged(int status) {
-        boolean z2 = true;
+        Log.d(TAG, "notifyStatusChanged: " + status);
+        boolean hotwordActive = true;
         if (mServiceStatus != status) {
             mServiceStatus = status;
             if ((status & 2) == 0) {
-                z2 = false;
+                hotwordActive = false;
             }
-            mLauncherClientCallbacks.onServiceStateChanged((status & 1) != 0, z2);
+            mLauncherClientCallbacks.onServiceStateChanged((status & 1) != 0, hotwordActive);
         }
     }
 
@@ -498,17 +516,18 @@ public class LauncherClient {
 
     static Intent getIntent(Context context) {
         String packageName = context.getPackageName();
-        return new Intent(Constant.ACTION)
-                .setPackage(Constant.GSA_PACKAGE)
-                .setData(Uri.parse(new StringBuilder(String.valueOf(packageName).length() + 18)
-                        .append("app://")
-                        .append(packageName)
-                        .append(":")
-                        .append(Process.myUid())
-                        .toString()).buildUpon()
-                        .appendQueryParameter("v", Integer.toString(9))
-                        .appendQueryParameter("cv", Integer.toString(14))
-                        .build());
+//        return new Intent(Constant.ACTION)
+//                .setPackage(Constant.GSA_PACKAGE);
+//                .setData(Uri.parse(new StringBuilder(String.valueOf(packageName).length() + 18)
+//                        .append("app://")
+//                        .append(packageName)
+//                        .append(":")
+//                        .append(Process.myUid())
+//                        .toString()).buildUpon()
+//                        .appendQueryParameter("v", Integer.toString(9))
+//                        .appendQueryParameter("cv", Integer.toString(14))
+//                        .build());
+        return new Intent().setComponent(new ComponentName(Constant.GSA_PACKAGE, Constant.GSA_CLASS));
     }
 
     public static void loadApiVersion(Context context) {

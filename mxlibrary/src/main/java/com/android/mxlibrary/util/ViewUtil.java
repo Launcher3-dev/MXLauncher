@@ -1,4 +1,4 @@
-package com.android.mxlibrary.view;
+package com.android.mxlibrary.util;
 
 import android.graphics.Rect;
 import android.view.View;

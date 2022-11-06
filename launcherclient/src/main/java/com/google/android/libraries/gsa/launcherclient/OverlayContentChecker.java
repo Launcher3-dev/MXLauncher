@@ -4,7 +4,8 @@ import android.content.Context;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.google.android.libraries.launcherclient.ILauncherOverlayStub;
+import com.google.android.libraries.launcherclient.ILauncherOverlay;
+
 
 public class OverlayContentChecker extends AbsServiceStatusChecker {
     public OverlayContentChecker(Context context) {
@@ -16,6 +17,6 @@ public class OverlayContentChecker extends AbsServiceStatusChecker {
     }
 
     public final boolean getStatus(IBinder iBinder) throws RemoteException {
-        return ILauncherOverlayStub.asInterface(iBinder).mo21f();
+        return ILauncherOverlay.Stub.asInterface(iBinder).mo21f();
     }
 }

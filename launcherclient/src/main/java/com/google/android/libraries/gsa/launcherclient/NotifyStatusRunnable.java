@@ -8,7 +8,7 @@ final class NotifyStatusRunnable implements Runnable {
         this.launcherClient = launcherClient;
     }
 
-    public final void run() {
-        this.launcherClient.notifyStatusChanged(0);
+    public void run() {
+        launcherClient.notifyStatusChanged(0);
     }
 }

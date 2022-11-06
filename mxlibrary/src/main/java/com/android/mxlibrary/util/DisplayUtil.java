@@ -2,6 +2,7 @@ package com.android.mxlibrary.util;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -42,6 +43,19 @@ public final class DisplayUtil {
     public static int getGestureReplaceNavigationBarId(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 isAboveO() ? GESTURE_REPLACE_NAVIGATION_BAR : NAVBAR_STATE_CHANGED, 0);
+    }
+
+
+    class EffectHandler extends MxHandler<DisplayUtil> {
+
+        public EffectHandler(DisplayUtil displayUtil) {
+            super(displayUtil);
+        }
+
+        @Override
+        protected void handleMessage(DisplayUtil displayUtil, Message msg) {
+
+        }
     }
 
 }

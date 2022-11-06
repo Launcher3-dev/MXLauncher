@@ -16,6 +16,7 @@
 package com.android.launcher3.util;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.EdgeEffect;
 
 import com.android.launcher3.Utilities;
@@ -36,6 +37,8 @@ public class EdgeEffectCompat extends EdgeEffect {
 
     @Override
     public float onPullDistance(float deltaDistance, float displacement) {
+        Log.d("Launcher.EdgeEffectCompat", "onTouchEvent:deltaDistance " + deltaDistance + " ,displacement " + displacement);
+        Log.d("Launcher.EdgeEffectCompat", "onTouchEvent:Utilities.ATLEAST_S " + Utilities.ATLEAST_S);
         if (Utilities.ATLEAST_S) {
             return super.onPullDistance(deltaDistance, displacement);
         } else {
@@ -43,4 +46,5 @@ public class EdgeEffectCompat extends EdgeEffect {
             return deltaDistance;
         }
     }
+
 }

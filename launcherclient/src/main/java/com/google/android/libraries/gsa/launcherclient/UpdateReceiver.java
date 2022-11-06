@@ -16,7 +16,7 @@ final class UpdateReceiver extends BroadcastReceiver {
         this.mClient = launcherClient;
     }
 
-    public final void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         Uri data = intent.getData();
         if (Build.VERSION.SDK_INT >= 19 || (data != null && Constant.GSA_PACKAGE.equals(data.getSchemeSpecificPart()))) {
             this.mClient.mSimpleServiceConnection.unbindService();

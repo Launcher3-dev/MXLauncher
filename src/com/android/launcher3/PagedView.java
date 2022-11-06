@@ -72,7 +72,7 @@ import java.util.function.Consumer;
  * sequential list of "pages"
  */
 public abstract class PagedView<T extends View & PageIndicator> extends ViewGroup {
-    private static final String TAG = "PagedView";
+    private static final String TAG = "Launcher.PagedView";
     private static final boolean DEBUG = false;
     public static final boolean DEBUG_FAILED_QUICKSWITCH = false;
 
@@ -1317,10 +1317,10 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
 
                 if (delta != 0) {
                     mOrientationHandler.setPrimary(this, VIEW_SCROLL_BY, movedDelta);
-
+                    Log.d(TAG, "onTouchEvent:mAllowOverScroll " + mAllowOverScroll);
                     if (mAllowOverScroll) {
                         final float pulledToX = oldScroll + delta;
-
+                        Log.d(TAG, "onTouchEvent:pulledToX " + pulledToX + " ,mMinScroll " + mMinScroll + " ,mMaxScroll " + mMaxScroll);
                         if (pulledToX < mMinScroll) {
                             mEdgeGlowLeft.onPullDistance(-delta / size, 1.f - displacement);
                             if (!mEdgeGlowRight.isFinished()) {

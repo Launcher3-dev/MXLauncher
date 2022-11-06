@@ -3,8 +3,8 @@ package com.google.android.libraries.gsa.launcherclient;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.IBinder;
+import android.util.Log;
 
-import com.google.android.libraries.launcherclient.ILauncherOverlayStub;
 import com.google.android.libraries.launcherclient.ILauncherOverlay;
 
 import java.lang.ref.WeakReference;
@@ -12,8 +12,6 @@ import java.lang.ref.WeakReference;
 final class AppServiceConnection extends SimpleServiceConnection {
 
     private static AppServiceConnection serviceConnection;
-
-    private ILauncherOverlay launcherOverlay;
 
     private WeakReference<LauncherClient> weakReference;
 
@@ -27,16 +25,16 @@ final class AppServiceConnection extends SimpleServiceConnection {
     }
 
     private AppServiceConnection(Context context) {
-        super(context, 33);
+        super(context, Context.BIND_AUTO_CREATE & Context.BIND_NOT_FOREGROUND);
     }
 
     public ILauncherOverlay registerLauncherClient(LauncherClient launcherClient) {
         this.weakReference = new WeakReference<>(launcherClient);
-        return launcherOverlay;
+        return mLauncherOverlay;
     }
 
     public void stopService(boolean stopService) {
-        stopService = stopService;
+        this.stopService = stopService;
         resetService();
     }
 
@@ -53,26 +51,31 @@ final class AppServiceConnection extends SimpleServiceConnection {
         }
     }
 
+    @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        setLauncherOverlay(ILauncherOverlayStub.asInterface(iBinder));
+        super.onServiceConnected(componentName, iBinder);
+        Log.d(TAG, "onServiceConnected: ");
+        setLauncherOverlay(mLauncherOverlay);
     }
 
+    @Override
     public void onServiceDisconnected(ComponentName componentName) {
+        super.onServiceDisconnected(componentName);
+        Log.d(TAG, "onServiceDisconnected: ");
         setLauncherOverlay(null);
         resetService();
     }
 
     private void resetService() {
-        if (stopService && launcherOverlay == null) {
+        if (stopService && mLauncherOverlay == null) {
             unbindService();
         }
     }
 
     private void setLauncherOverlay(ILauncherOverlay overlay) {
-        launcherOverlay = overlay;
         LauncherClient client = getLauncherClient();
         if (client != null) {
-            client.setLauncherOverlay(launcherOverlay);
+            client.setLauncherOverlay(overlay);
         }
     }
 

@@ -117,6 +117,7 @@ import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.notification.NotificationListener;
+import com.android.launcher3.overlay.GoogleOverlay;
 import com.android.launcher3.pm.PinRequestHelper;
 import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.popup.ArrowPopup;
@@ -543,7 +544,10 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     protected LauncherOverlayManager getDefaultOverlay() {
-        return new LauncherOverlayManager() { };
+        if (FeatureFlags.LAUNCHER_OVERLAY_ENABLED) {
+            return new GoogleOverlay(this);
+        }
+        return new LauncherOverlayManager() {};
     }
 
     protected OnboardingPrefs<? extends Launcher> createOnboardingPrefs(

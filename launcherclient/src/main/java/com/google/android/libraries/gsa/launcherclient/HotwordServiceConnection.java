@@ -17,10 +17,10 @@ final class HotwordServiceConnection implements ServiceConnection {
         this.statusCallback = statusCallback;
     }
 
-    public final void onServiceDisconnected(ComponentName componentName) {
+    public void onServiceDisconnected(ComponentName componentName) {
     }
 
-    public final void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         try {
             this.statusCallback.isRunning(this.absServiceStatusChecker.getStatus(iBinder));
             this.absServiceStatusChecker.mContext.unbindService(this);

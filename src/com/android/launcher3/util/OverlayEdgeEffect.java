@@ -17,6 +17,7 @@ package com.android.launcher3.util;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.widget.EdgeEffect;
 
 import com.android.launcher3.Utilities;
@@ -45,7 +46,9 @@ public class OverlayEdgeEffect extends EdgeEffectCompat {
         return mDistance;
     }
 
+    @Override
     public float onPullDistance(float deltaDistance, float displacement) {
+        Log.d("GoogleOverlay", "onPullDistance: ");
         mDistance = Math.max(0f, deltaDistance + mDistance);
         if (!mIsScrolling) {
             mOverlay.onScrollInteractionBegin();

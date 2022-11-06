@@ -286,9 +286,6 @@ public class BaseIconFactory implements AutoCloseable {
 
     protected Drawable normalizeAndWrapToAdaptiveIcon(@NonNull Drawable icon,
             boolean shrinkNonAdaptiveIcons, RectF outIconBounds, float[] outScale) {
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: shrinkNonAdaptiveIcons: " + shrinkNonAdaptiveIcons);
-        }
         if (icon == null) {
             return null;
         }
@@ -312,14 +309,8 @@ public class BaseIconFactory implements AutoCloseable {
                 // 设置图标默认背景色
                 ((ColorDrawable) dr.getBackground()).setColor(mWrapperBackgroundColor);
             }
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: scale---: " + scale);
-            }
         } else {
             scale = getNormalizer().getScale(icon, outIconBounds, null, null);
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "normalizeAndWrapToAdaptiveIcon: scale===: " + scale);
-            }
         }
 
         outScale[0] = scale;
