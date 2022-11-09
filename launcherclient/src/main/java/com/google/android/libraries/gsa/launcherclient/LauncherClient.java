@@ -343,17 +343,11 @@ public class LauncherClient {
                     mCurrentCallbacks = new OverlayCallbacks();
                 }
                 mCurrentCallbacks.setClient(this);
-                if (sServiceVersion < 3) {
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("layout_params", mWindowAttrs);
-                    mOverlay.windowAttached(bundle, mCurrentCallbacks, mServiceConnectionOptions);
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("layout_params", mWindowAttrs);
-                    bundle.putParcelable("configuration", mActivity.getResources().getConfiguration());
-                    bundle.putInt("client_options", mServiceConnectionOptions);
-                    mOverlay.windowAttached2(bundle, mCurrentCallbacks);
-                }
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("layout_params", mWindowAttrs);
+                bundle.putParcelable("configuration", mActivity.getResources().getConfiguration());
+                bundle.putInt("client_options", mServiceConnectionOptions);
+                mOverlay.windowAttached(bundle, mCurrentCallbacks);
                 if (sServiceVersion >= 4) {
                     mOverlay.onStart(mState);
                 } else if ((mState & 2) != 0) {

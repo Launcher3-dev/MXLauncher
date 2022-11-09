@@ -11,9 +11,7 @@ interface ILauncherOverlay {
 
     void closeOverlay(int i);
 
-    void windowAttached2(in Bundle bundle, ILauncherOverlayCallback dVar);
-
-    void windowAttached(in Bundle bundle, ILauncherOverlayCallback dVar, int i);
+    void windowAttached(in Bundle bundle, ILauncherOverlayCallback dVar);
 
     void windowDetached(boolean changingConfigurations);
     
@@ -33,5 +31,5 @@ interface ILauncherOverlay {
 
     boolean isVoiceDetectionRunning();
 
-    boolean mo21f();
+    boolean requestState();
 }

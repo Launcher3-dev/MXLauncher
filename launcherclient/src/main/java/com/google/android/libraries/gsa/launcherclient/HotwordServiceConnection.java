@@ -12,7 +12,8 @@ final class HotwordServiceConnection implements ServiceConnection {
 
     private final AbsServiceStatusChecker absServiceStatusChecker;
 
-    public HotwordServiceConnection(AbsServiceStatusChecker absServiceStatusChecker, AbsServiceStatusChecker.StatusCallback statusCallback) {
+    public HotwordServiceConnection(AbsServiceStatusChecker absServiceStatusChecker,
+                                    AbsServiceStatusChecker.StatusCallback statusCallback) {
         this.absServiceStatusChecker = absServiceStatusChecker;
         this.statusCallback = statusCallback;
     }

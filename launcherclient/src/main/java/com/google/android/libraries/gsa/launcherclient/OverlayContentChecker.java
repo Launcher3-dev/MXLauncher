@@ -17,6 +17,6 @@ public class OverlayContentChecker extends AbsServiceStatusChecker {
     }
 
     public final boolean getStatus(IBinder iBinder) throws RemoteException {
-        return ILauncherOverlay.Stub.asInterface(iBinder).mo21f();
+        return ILauncherOverlay.Stub.asInterface(iBinder).requestState();
     }
 }
