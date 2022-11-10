@@ -82,6 +82,7 @@ public class LauncherSwipeHandlerV2 extends
             };
         }
 
+        // 从最近应用任务栈查找正在运行的任务，就是最近打开的应用视图
         final View workspaceView = findWorkspaceView(launchCookies,
                 mRecentsView.getRunningTaskView());
         boolean canUseWorkspaceView = workspaceView != null && workspaceView.isAttachedToWindow();

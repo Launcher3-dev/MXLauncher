@@ -159,6 +159,7 @@ public class RecentsAnimationController {
         // Finish not yet requested
         mFinishRequested = true;
         mFinishTargetIsLauncher = toRecents;
+        // 执行onAnimationFinished(this)
         mOnFinishedListener.accept(this);
         mPendingFinishCallbacks.add(callback);
         UI_HELPER_EXECUTOR.execute(() -> {

@@ -180,50 +180,50 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
 
     // Launcher UI related states
     protected static final int STATE_LAUNCHER_PRESENT =
-            getFlagForIndex(0, "STATE_LAUNCHER_PRESENT");
+            getFlagForIndex(0, "STATE_LAUNCHER_PRESENT");// 1
     protected static final int STATE_LAUNCHER_STARTED =
-            getFlagForIndex(1, "STATE_LAUNCHER_STARTED");
+            getFlagForIndex(1, "STATE_LAUNCHER_STARTED");// 2
     protected static final int STATE_LAUNCHER_DRAWN =
-            getFlagForIndex(2, "STATE_LAUNCHER_DRAWN");
+            getFlagForIndex(2, "STATE_LAUNCHER_DRAWN");// 4
     // Called when the Launcher has connected to the touch interaction service (and the taskbar
     // ui controller is initialized)
     protected static final int STATE_LAUNCHER_BIND_TO_SERVICE =
-            getFlagForIndex(3, "STATE_LAUNCHER_BIND_TO_SERVICE");
+            getFlagForIndex(3, "STATE_LAUNCHER_BIND_TO_SERVICE");// 8
 
     // Internal initialization states
     private static final int STATE_APP_CONTROLLER_RECEIVED =
-            getFlagForIndex(4, "STATE_APP_CONTROLLER_RECEIVED");
+            getFlagForIndex(4, "STATE_APP_CONTROLLER_RECEIVED");// 16
 
     // Interaction finish states
     private static final int STATE_SCALED_CONTROLLER_HOME =
-            getFlagForIndex(5, "STATE_SCALED_CONTROLLER_HOME");
+            getFlagForIndex(5, "STATE_SCALED_CONTROLLER_HOME");// 32
     private static final int STATE_SCALED_CONTROLLER_RECENTS =
-            getFlagForIndex(6, "STATE_SCALED_CONTROLLER_RECENTS");
+            getFlagForIndex(6, "STATE_SCALED_CONTROLLER_RECENTS");//64
 
     protected static final int STATE_HANDLER_INVALIDATED =
-            getFlagForIndex(7, "STATE_HANDLER_INVALIDATED");
+            getFlagForIndex(7, "STATE_HANDLER_INVALIDATED");// 128
     private static final int STATE_GESTURE_STARTED =
-            getFlagForIndex(8, "STATE_GESTURE_STARTED");
+            getFlagForIndex(8, "STATE_GESTURE_STARTED");// 256
     private static final int STATE_GESTURE_CANCELLED =
-            getFlagForIndex(9, "STATE_GESTURE_CANCELLED");
+            getFlagForIndex(9, "STATE_GESTURE_CANCELLED");// 512
     private static final int STATE_GESTURE_COMPLETED =
-            getFlagForIndex(10, "STATE_GESTURE_COMPLETED");
+            getFlagForIndex(10, "STATE_GESTURE_COMPLETED");// 1024
 
     private static final int STATE_CAPTURE_SCREENSHOT =
-            getFlagForIndex(11, "STATE_CAPTURE_SCREENSHOT");
+            getFlagForIndex(11, "STATE_CAPTURE_SCREENSHOT");// 2048
     protected static final int STATE_SCREENSHOT_CAPTURED =
-            getFlagForIndex(12, "STATE_SCREENSHOT_CAPTURED");
+            getFlagForIndex(12, "STATE_SCREENSHOT_CAPTURED");// 4096
     private static final int STATE_SCREENSHOT_VIEW_SHOWN =
-            getFlagForIndex(13, "STATE_SCREENSHOT_VIEW_SHOWN");
+            getFlagForIndex(13, "STATE_SCREENSHOT_VIEW_SHOWN");// 8192
 
     private static final int STATE_RESUME_LAST_TASK =
-            getFlagForIndex(14, "STATE_RESUME_LAST_TASK");
+            getFlagForIndex(14, "STATE_RESUME_LAST_TASK");// 16384
     private static final int STATE_START_NEW_TASK =
-            getFlagForIndex(15, "STATE_START_NEW_TASK");
+            getFlagForIndex(15, "STATE_START_NEW_TASK");// 32768
     private static final int STATE_CURRENT_TASK_FINISHED =
-            getFlagForIndex(16, "STATE_CURRENT_TASK_FINISHED");
+            getFlagForIndex(16, "STATE_CURRENT_TASK_FINISHED");// 65536
     private static final int STATE_FINISH_WITH_NO_END =
-            getFlagForIndex(17, "STATE_FINISH_WITH_NO_END");
+            getFlagForIndex(17, "STATE_FINISH_WITH_NO_END");// 131072
 
     private static final int LAUNCHER_UI_STATES =
             STATE_LAUNCHER_PRESENT | STATE_LAUNCHER_DRAWN | STATE_LAUNCHER_STARTED |
@@ -530,6 +530,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         flushOnRecentsAnimationAndLauncherBound();
     }
 
+    // STATE_LAUNCHER_PRESENT | STATE_GESTURE_STARTED
     private void onLauncherPresentAndGestureStarted() {
         // Re-setup the recents UI when gesture starts, as the state could have been changed during
         // that time by a previous window transition.
@@ -580,10 +581,12 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         mRecentsView.onGestureAnimationStart(runningTasks, mDeviceState.getRotationTouchHelper());
     }
 
+    // STATE_LAUNCHER_PRESENT | STATE_LAUNCHER_DRAWN
     private void launcherFrameDrawn() {
         mLauncherFrameDrawnTime = SystemClock.uptimeMillis();
     }
 
+    // STATE_LAUNCHER_DRAWN | STATE_GESTURE_STARTED
     private void initializeLauncherAnimationController() {
         buildAnimationController();
 
@@ -963,6 +966,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         }
     }
 
+    // STATE_END_TARGET_ANIMATION_FINISHED | STATE_RECENTS_SCROLLING_FINISHED
     private void onSettledOnEndTarget() {
         // Fast-finish the attaching animation if it's still running.
         maybeUpdateRecentsAttachedState(false);
@@ -1285,6 +1289,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
                     && runningTaskTarget.allowEnterPip
                     && runningTaskTarget.taskInfo.pictureInPictureParams != null
                     && runningTaskTarget.taskInfo.pictureInPictureParams.isAutoEnterEnabled();
+            // 返回FloatingViewHomeAnimationFactory对象
             HomeAnimationFactory homeAnimFactory =
                     createHomeAnimationFactory(cookies, duration, isTranslucent, appCanEnterPip,
                             runningTaskTarget);
@@ -1488,6 +1493,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         }
     }
 
+    // STATE_END_TARGET_ANIMATION_FINISHED
     private void continueComputingRecentsScrollIfNecessary() {
         if (!mGestureState.hasState(STATE_RECENTS_SCROLLING_FINISHED)
                 && !mStateCallback.hasStates(STATE_HANDLER_INVALIDATED)
@@ -1552,6 +1558,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         return mCanceled;
     }
 
+    // STATE_RESUME_LAST_TASK | STATE_APP_CONTROLLER_RECEIVED
     @UiThread
     private void resumeLastTask() {
         if (mRecentsAnimationController != null) {
@@ -1562,6 +1569,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         reset();
     }
 
+    // STATE_START_NEW_TASK | STATE_SCREENSHOT_CAPTURED
     @UiThread
     private void startNewTask() {
         TaskView taskToLaunch = mRecentsView == null ? null : mRecentsView.getNextPageTaskView();
@@ -1593,6 +1601,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         reset();
     }
 
+    // STATE_SCALED_CONTROLLER_HOME | STATE_CURRENT_TASK_FINISHED
     private void reset() {
         mStateCallback.setStateOnUiThread(STATE_HANDLER_INVALIDATED);
         if (mActivity != null) {
@@ -1615,6 +1624,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         mTaskSnapshot = null;
     }
 
+    // STATE_HANDLER_INVALIDATED
     private void invalidateHandler() {
         if (!ENABLE_QUICKSTEP_LIVE_TILE.get() || !mActivityInterface.isInLiveTileMode()
                 || mGestureState.getEndTarget() != RECENTS) {
@@ -1634,6 +1644,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         mTaskSnapshot = null;
     }
 
+    // STATE_LAUNCHER_PRESENT | STATE_HANDLER_INVALIDATED
     private void invalidateHandlerWithLauncher() {
         endLauncherTransitionController();
 
@@ -1671,6 +1682,9 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         mRecentsView.removeOnScrollChangedListener(mOnRecentsScrollListener);
     }
 
+    // STATE_LAUNCHER_PRESENT | STATE_LAUNCHER_STARTED | STATE_GESTURE_CANCELLED
+    // STATE_HANDLER_INVALIDATED | STATE_RESUME_LAST_TASK
+    // STATE_HANDLER_INVALIDATED | STATE_FINISH_WITH_NO_END
     private void resetStateForAnimationCancel() {
         boolean wasVisible = mWasLauncherAlreadyVisible || mGestureStarted;
         mActivityInterface.onTransitionCancelled(wasVisible, mGestureState.getEndTarget());
@@ -1685,6 +1699,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         }
     }
 
+    // STATE_LAUNCHER_PRESENT | STATE_APP_CONTROLLER_RECEIVED | STATE_LAUNCHER_DRAWN | STATE_CAPTURE_SCREENSHOT
     protected void switchToScreenshot() {
         if (!hasTargets()) {
             // If there are no targets, then we don't need to capture anything
@@ -1746,6 +1761,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         TraceHelper.INSTANCE.endSection(traceToken);
     }
 
+    // STATE_SCREENSHOT_CAPTURED | STATE_GESTURE_COMPLETED | STATE_SCALED_CONTROLLER_RECENTS
     private void finishCurrentTransitionToRecents() {
         if (ENABLE_QUICKSTEP_LIVE_TILE.get()) {
             mStateCallback.setStateOnUiThread(STATE_CURRENT_TASK_FINISHED);
@@ -1762,6 +1778,7 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
         ActiveGestureLog.INSTANCE.addLog("finishRecentsAnimation", true);
     }
 
+    // STATE_SCREENSHOT_CAPTURED | STATE_GESTURE_COMPLETED | STATE_SCALED_CONTROLLER_HOME
     private void finishCurrentTransitionToHome() {
         if (!hasTargets() || mRecentsAnimationController == null) {
             // If there are no targets or the animation not started, then there is nothing to finish
@@ -1808,6 +1825,9 @@ public abstract class AbsSwipeUpHandler<T extends StatefulActivity<S>,
 
     protected abstract void finishRecentsControllerToHome(Runnable callback);
 
+    // STATE_LAUNCHER_PRESENT | STATE_APP_CONTROLLER_RECEIVED | STATE_LAUNCHER_DRAWN
+    // | STATE_SCALED_CONTROLLER_RECENTS | STATE_CURRENT_TASK_FINISHED | STATE_GESTURE_COMPLETED
+    // | STATE_GESTURE_STARTED
     private void setupLauncherUiAfterSwipeUpToRecentsAnimation() {
         if (mStateCallback.hasStates(STATE_HANDLER_INVALIDATED)) {
             return;
