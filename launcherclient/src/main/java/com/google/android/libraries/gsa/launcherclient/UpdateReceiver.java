@@ -19,8 +19,7 @@ final class UpdateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Uri data = intent.getData();
         if (Build.VERSION.SDK_INT >= 19 || (data != null && Constant.GSA_PACKAGE.equals(data.getSchemeSpecificPart()))) {
-            this.mClient.mSimpleServiceConnection.unbindService();
-            this.mClient.sApplicationConnection.unbindService();
+            this.mClient.mOverlayServiceConnection.unbindService();
             LauncherClient.loadApiVersion(context);
             if ((this.mClient.mState & 2) != 0) {
                 this.mClient.reconnect();

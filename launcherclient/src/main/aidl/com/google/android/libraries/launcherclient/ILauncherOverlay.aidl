@@ -11,9 +11,9 @@ interface ILauncherOverlay {
 
     void closeOverlay(int i);
 
-    void windowAttached(in Bundle bundle, ILauncherOverlayCallback dVar);
+    void onAttachedToWindow(in Bundle bundle, ILauncherOverlayCallback dVar);
 
-    void windowDetached(boolean changingConfigurations);
+    void onDetachedFromWindow(boolean changingConfigurations);
     
     void startScroll();
 

@@ -37,9 +37,8 @@ public class EdgeEffectCompat extends EdgeEffect {
 
     @Override
     public float onPullDistance(float deltaDistance, float displacement) {
-        Log.d("Launcher.EdgeEffectCompat", "onTouchEvent:deltaDistance " + deltaDistance + " ,displacement " + displacement);
-        Log.d("Launcher.EdgeEffectCompat", "onTouchEvent:Utilities.ATLEAST_S " + Utilities.ATLEAST_S);
-        if (Utilities.ATLEAST_S) {
+        Log.d("Launcher.EdgeEffectCompat", "onPullDistance:deltaDistance " + deltaDistance + " ,displacement " + displacement);
+        if (Utilities.ATLEAST_S) {// 31
             return super.onPullDistance(deltaDistance, displacement);
         } else {
             onPull(deltaDistance, displacement);

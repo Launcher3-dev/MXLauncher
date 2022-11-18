@@ -48,18 +48,18 @@ public class GoogleOverlay implements LauncherOverlayManager, LauncherOverlayMan
                 Log.d(TAG, "onServiceStateChanged: " + overlayAttached);
                 if (mWasOverlayAttached != overlayAttached) {
                     mWasOverlayAttached = overlayAttached;
-                    mLauncher.setLauncherOverlay(overlayAttached ? GoogleOverlay.this : null);
                 }
             }
         };
         mClient = new LauncherClient(launcher, mLauncherClientCallbacks, getClientOptions(prefs));
         prefs.registerOnSharedPreferenceChangeListener(this);
         Log.d(TAG, "GoogleOverlay: init");
+        mLauncher.setLauncherOverlay(this);
     }
 
     @Override
     public void onActivityCreated(Activity activity, Bundle bundle) {
-
+        Log.d(TAG, "onActivityCreated: ");
     }
 
     @Override
@@ -96,9 +96,11 @@ public class GoogleOverlay implements LauncherOverlayManager, LauncherOverlayMan
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        Log.d(TAG, "onActivityDestroyed: ");
         if (mClient != null) {
             mClient.onDestroy();
         }
+        mLauncher.setLauncherOverlay(null);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class GoogleOverlay implements LauncherOverlayManager, LauncherOverlayMan
 
     @Override
     public void onScrollInteractionBegin() {
-        Log.d(TAG, "onScrollInteractionBegin: ");
+        Log.d(TAG, "onScrollInteractionBegin: " + mClient);
         if (mClient != null) {
             mClient.startMove();
         }

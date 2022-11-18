@@ -34,8 +34,7 @@ public class LauncherClient {
     public final LauncherClientCallbacks mLauncherClientCallbacks;
     private final EventLogArray mClientLog;
     public final EventLogArray mServiceLog;
-    public final SimpleServiceConnection mSimpleServiceConnection;
-    public final AppServiceConnection sApplicationConnection;
+    public final OverlayServiceConnection mOverlayServiceConnection;
     private final BroadcastReceiver mUpdateReceiver;
     private ILauncherOverlay mOverlay;
     public int mState;
@@ -174,10 +173,9 @@ public class LauncherClient {
         mServiceStatus = 0;
         mActivity = activity;
         mLauncherClientCallbacks = launcherClientCallbacks;
-        mSimpleServiceConnection = new SimpleServiceConnection(activity, Context.BIND_AUTO_CREATE);
+        mOverlayServiceConnection = new OverlayServiceConnection(activity, Context.BIND_AUTO_CREATE);
         mServiceConnectionOptions = clientOptions.f19a;
-        sApplicationConnection = AppServiceConnection.getInstance(activity);
-        mOverlay = sApplicationConnection.registerLauncherClient(this);
+        mOverlayServiceConnection.registerLauncherClient(this);
         IntentFilter intentFilter = new IntentFilter("android.intent.action.PACKAGE_ADDED");
         intentFilter.addDataScheme("package");
         if (Build.VERSION.SDK_INT >= 19) {
@@ -211,7 +209,24 @@ public class LauncherClient {
         }
     }
 
+    public void onStart() {
+        Log.d(TAG, "onStart: ");
+        if (!mDestroyed) {
+            mOverlayServiceConnection.stopService(false);
+            reconnect();
+            mState |= 1;
+            if (!(mOverlay == null || mWindowAttrs == null)) {
+                try {
+                    mOverlay.onStart(mState);
+                } catch (RemoteException e) {
+                }
+            }
+            mClientLog.print("stateChanged ", mState);
+        }
+    }
+
     public void onResume() {
+        Log.d(TAG, "onResume: ");
         Log.d(TAG, "onResume: " + mDestroyed);
         if (!mDestroyed) {
             mState |= 2;
@@ -230,6 +245,7 @@ public class LauncherClient {
     }
 
     public void onPause() {
+        Log.d(TAG, "onPause: ");
         if (!mDestroyed) {
             mState &= -3;
             if (!(mOverlay == null || mWindowAttrs == null)) {
@@ -246,25 +262,11 @@ public class LauncherClient {
         }
     }
 
-    public void onStart() {
-        if (!mDestroyed) {
-            sApplicationConnection.stopService(false);
-            reconnect();
-            mState |= 1;
-            if (!(mOverlay == null || mWindowAttrs == null)) {
-                try {
-                    mOverlay.onStart(mState);
-                } catch (RemoteException e) {
-                }
-            }
-            mClientLog.print("stateChanged ", mState);
-        }
-    }
-
     public void onStop() {
+        Log.d(TAG, "onStop: ");
         if (!mDestroyed) {
-            sApplicationConnection.stopService(true);
-            mSimpleServiceConnection.unbindService();
+            mOverlayServiceConnection.stopService(true);
+            mOverlayServiceConnection.unbindService();
             mState &= -2;
             if (!(mOverlay == null || mWindowAttrs == null)) {
                 try {
@@ -277,6 +279,7 @@ public class LauncherClient {
     }
 
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
         disconnect(!mActivity.isChangingConfigurations());
     }
 
@@ -300,18 +303,18 @@ public class LauncherClient {
             mActivity.unregisterReceiver(mUpdateReceiver);
         }
         mDestroyed = true;
-        mSimpleServiceConnection.unbindService();
+        mOverlayServiceConnection.unbindService();
         if (mCurrentCallbacks != null) {
             mCurrentCallbacks.clear();
             mCurrentCallbacks = null;
         }
-        sApplicationConnection.unbindService(this, unbindService);
+        mOverlayServiceConnection.unbindService(this, unbindService);
     }
 
     public void reconnect() {
         Log.d(TAG, "reconnect: " + mDestroyed);
         if (!mDestroyed) {
-            if (!sApplicationConnection.reconnect() || !mSimpleServiceConnection.reconnect()) {
+            if (!mOverlayServiceConnection.reconnect()) {
                 mActivity.runOnUiThread(new NotifyStatusRunnable(this));
             }
         }
@@ -325,7 +328,7 @@ public class LauncherClient {
                 applyWindowToken();
             } else if (mOverlay != null) {
                 try {
-                    mOverlay.windowDetached(mActivity.isChangingConfigurations());
+                    mOverlay.onDetachedFromWindow(mActivity.isChangingConfigurations());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -347,7 +350,7 @@ public class LauncherClient {
                 bundle.putParcelable("layout_params", mWindowAttrs);
                 bundle.putParcelable("configuration", mActivity.getResources().getConfiguration());
                 bundle.putInt("client_options", mServiceConnectionOptions);
-                mOverlay.windowAttached(bundle, mCurrentCallbacks);
+                mOverlay.onAttachedToWindow(bundle, mCurrentCallbacks);
                 if (sServiceVersion >= 4) {
                     mOverlay.onStart(mState);
                 } else if ((mState & 2) != 0) {
@@ -366,6 +369,7 @@ public class LauncherClient {
     }
 
     public void startMove() {
+        android.util.Log.d(TAG, "startMove: " + isConnected());
         mClientLog.print("startMove");
         if (isConnected()) {
             try {
@@ -481,6 +485,10 @@ public class LauncherClient {
         }
     }
 
+    public void onServiceStateChanged(int status, boolean hotwordActive) {
+        mLauncherClientCallbacks.onServiceStateChanged((status & 1) != 0, hotwordActive);
+    }
+
     public final void notifyStatusChanged(int status) {
         Log.d(TAG, "notifyStatusChanged: " + status);
         boolean hotwordActive = true;
@@ -489,7 +497,6 @@ public class LauncherClient {
             if ((status & 2) == 0) {
                 hotwordActive = false;
             }
-            mLauncherClientCallbacks.onServiceStateChanged((status & 1) != 0, hotwordActive);
         }
     }
 
@@ -497,8 +504,7 @@ public class LauncherClient {
         printWriter.println(String.valueOf(str).concat("LauncherClient"));
         String concat = String.valueOf(str).concat("  ");
         printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("isConnected: ").append(isConnected()).toString());
-        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("act.isBound: ").append(mSimpleServiceConnection.isConnected()).toString());
-        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("app.isBound: ").append(sApplicationConnection.isConnected()).toString());
+        printWriter.println(new StringBuilder(concat.length() + 18).append(concat).append("act.isBound: ").append(mOverlayServiceConnection.isConnected()).toString());
         printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("serviceVersion: ").append(sServiceVersion).toString());
         printWriter.println(new StringBuilder(concat.length() + 17).append(concat).append("clientVersion: 14").toString());
         printWriter.println(new StringBuilder(concat.length() + 27).append(concat).append("mActivityState: ").append(mState).toString());

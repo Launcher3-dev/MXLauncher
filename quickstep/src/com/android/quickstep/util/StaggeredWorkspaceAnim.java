@@ -15,16 +15,6 @@
  */
 package com.android.quickstep.util;
 
-import static com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_Y;
-import static com.android.launcher3.LauncherState.BACKGROUND_APP;
-import static com.android.launcher3.LauncherState.NORMAL;
-import static com.android.launcher3.anim.AnimatorListeners.forEndCallback;
-import static com.android.launcher3.anim.Interpolators.LINEAR;
-import static com.android.launcher3.anim.PropertySetter.NO_ANIM_PROPERTY_SETTER;
-import static com.android.launcher3.states.StateAnimationConfig.SKIP_DEPTH_CONTROLLER;
-import static com.android.launcher3.states.StateAnimationConfig.SKIP_OVERVIEW;
-import static com.android.launcher3.states.StateAnimationConfig.SKIP_SCRIM;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -52,10 +42,20 @@ import com.android.launcher3.util.DynamicResource;
 import com.android.quickstep.views.RecentsView;
 import com.android.systemui.plugins.ResourceProvider;
 
+import static com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_Y;
+import static com.android.launcher3.LauncherState.BACKGROUND_APP;
+import static com.android.launcher3.LauncherState.NORMAL;
+import static com.android.launcher3.anim.AnimatorListeners.forEndCallback;
+import static com.android.launcher3.anim.Interpolators.LINEAR;
+import static com.android.launcher3.anim.PropertySetter.NO_ANIM_PROPERTY_SETTER;
+import static com.android.launcher3.states.StateAnimationConfig.SKIP_DEPTH_CONTROLLER;
+import static com.android.launcher3.states.StateAnimationConfig.SKIP_OVERVIEW;
+import static com.android.launcher3.states.StateAnimationConfig.SKIP_SCRIM;
+
 /**
  * Creates an animation where all the workspace items are moved into their final location,
- * staggered row by row from the bottom up.
- * This is used in conjunction with the swipe up to home animation.
+ * staggered(错列) row by row from the bottom up.
+ * This is used in conjunction(组合，同时发生) with the swipe up(上滑) to home animation.
  */
 public class StaggeredWorkspaceAnim {
 

@@ -196,8 +196,8 @@ public class WidgetsFullSheet extends BaseWidgetSheet
         layoutInflater.inflate(contentLayoutRes, mContent, true);
 
         RecyclerViewFastScroller fastScroller = findViewById(R.id.fast_scroller);
-        mAdapters.get(AdapterHolder.PRIMARY).setup(findViewById(R.id.primary_widgets_list_view));
-        mAdapters.get(AdapterHolder.SEARCH).setup(findViewById(R.id.search_widgets_list_view));
+        mAdapters.get(AdapterHolder.PRIMARY).setup(findViewById(R.id.primary_widgets_list_view));// personal mode
+        mAdapters.get(AdapterHolder.SEARCH).setup(findViewById(R.id.search_widgets_list_view));// search list
         if (mHasWorkProfile) {
             mViewPager = findViewById(R.id.widgets_view_pager);
             mViewPager.initParentViews(this);
@@ -207,7 +207,7 @@ public class WidgetsFullSheet extends BaseWidgetSheet
                     .setOnClickListener((View view) -> mViewPager.snapToPage(0));
             findViewById(R.id.tab_work)
                     .setOnClickListener((View view) -> mViewPager.snapToPage(1));
-            mAdapters.get(AdapterHolder.WORK).setup(findViewById(R.id.work_widgets_list_view));
+            mAdapters.get(AdapterHolder.WORK).setup(findViewById(R.id.work_widgets_list_view));// Work Profile
             setDeviceManagementResources();
         } else {
             mViewPager = null;
@@ -761,9 +761,9 @@ public class WidgetsFullSheet extends BaseWidgetSheet
 
     /** A holder class for holding adapters & their corresponding recycler view. */
     private final class AdapterHolder {
-        static final int PRIMARY = 0;
-        static final int WORK = 1;
-        static final int SEARCH = 2;
+        static final int PRIMARY = 0; // 默认所有的Widget列表
+        static final int WORK = 1; // 工作应用Widget列表，带有工作标签
+        static final int SEARCH = 2; // 搜索出来的Widget列表
 
         private final int mAdapterType;
         private final WidgetsListAdapter mWidgetsListAdapter;

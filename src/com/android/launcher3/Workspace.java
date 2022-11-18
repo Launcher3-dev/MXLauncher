@@ -1127,6 +1127,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         mOverlayEdgeEffect = overlay == null ? null : new OverlayEdgeEffect(getContext(), overlay);
         EdgeEffectCompat newEffect = overlay == null
                 ? new EdgeEffectCompat(getContext()) : mOverlayEdgeEffect;
+        Log.d(TAG, "setLauncherOverlay: " + overlay);
+        Log.d(TAG, "setLauncherOverlay:newEffect: " + newEffect);
         if (mIsRtl) {
             mEdgeGlowRight = newEffect;
         } else {

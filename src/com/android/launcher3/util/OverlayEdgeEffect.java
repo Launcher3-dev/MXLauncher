@@ -38,7 +38,6 @@ public class OverlayEdgeEffect extends EdgeEffectCompat {
         super(context);
         mOverlay = overlay;
         mIsRtl = Utilities.isRtl(context.getResources());
-
     }
 
     @Override
