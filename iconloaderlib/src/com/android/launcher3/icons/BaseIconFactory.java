@@ -57,7 +57,7 @@ public class BaseIconFactory implements AutoCloseable {
     private boolean mDisableColorExtractor;
 
     protected final int mFillResIconDpi;
-    protected final int mIconBitmapSize;
+    protected final int mIconBitmapSize;// 配置的图标图片大小
 
     protected boolean mMonoIconEnabled;
 
@@ -301,6 +301,7 @@ public class BaseIconFactory implements AutoCloseable {
             boolean[] outShape = new boolean[1];
             scale = getNormalizer().getScale(icon, outIconBounds, dr.getIconMask(), outShape);
             if (!outShape[0]) {
+                // 控制原始图标在合成图标中的缩放
                 FixedScaleDrawable fsd = ((FixedScaleDrawable) dr.getForeground());
                 fsd.setDrawable(icon);
                 fsd.setScale(scale);
