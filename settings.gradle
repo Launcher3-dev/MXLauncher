@@ -3,3 +3,4 @@ project(':IconLoader').projectDir = new File(rootDir, 'iconloaderlib')
 
 include ':mxlibrary'
 include ':launcherclient'
+include ':SystemUIShared'
