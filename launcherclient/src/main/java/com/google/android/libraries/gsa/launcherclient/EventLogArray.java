@@ -7,81 +7,88 @@ import java.util.Locale;
 
 final class EventLogArray {
 
+    private static final int TYPE_ONE_OFF = 0;
+    private static final int TYPE_FLOAT = 1;
+    private static final int TYPE_INTEGER = 2;
+    private static final int TYPE_BOOL_TRUE = 3;
+    private static final int TYPE_BOOL_FALSE = 4;
+
     private final String tag;
 
-    private final LogInfo[] logInfos;
+    private final LogInfo[] logs;
 
-    private int f36c = 0;
+    private int nextIndex = 0;
 
-    public EventLogArray(String str, int i) {
-        this.tag = str;
-        this.logInfos = new LogInfo[i];
+    public EventLogArray(String event, int size) {
+        tag = event;
+        logs = new LogInfo[size];
     }
 
-    public void print(String str) {
-        print(0, str, 0.0f);
+    public void print(String event) {
+        print(TYPE_ONE_OFF, event, 0.0f);
     }
 
-    public void print(String str, int i) {
-        print(2, str, (float) i);
+    public void print(String event, int extras) {
+        print(TYPE_INTEGER, event, (float) extras);
     }
 
-    public void print(String str, float f) {
-        print(1, str, f);
+    public void print(String event, float extras) {
+        print(TYPE_FLOAT, event, extras);
     }
 
-    public void print(String str, boolean z) {
-        print(z ? 3 : 4, str, 0.0f);
+    public void print(String event, boolean extras) {
+        print(extras ? TYPE_BOOL_TRUE : TYPE_BOOL_FALSE, event, 0.0f);
     }
 
-    private void print(int i, String str, float f) {
-        int length = ((this.f36c + this.logInfos.length) - 1) % this.logInfos.length;
-        int length2 = ((this.f36c + this.logInfos.length) - 2) % this.logInfos.length;
-        if (!m77a(this.logInfos[length], i, str) || !m77a(this.logInfos[length2], i, str)) {
-            if (this.logInfos[this.f36c] == null) {
-                this.logInfos[this.f36c] = new LogInfo((byte) 0);
+    private void print(int type, String event, float extras) {
+        int last = ((nextIndex + logs.length) - 1) % logs.length;
+        int secondLast = ((nextIndex + logs.length) - 2) % logs.length;
+        if (!isEntrySame(logs[last], type, event) || !isEntrySame(logs[secondLast], type, event)) {
+            if (logs[nextIndex] == null) {
+                logs[nextIndex] = new LogInfo((byte) 0);
             }
-            this.logInfos[this.f36c].mo68a(i, str, f);
-            this.f36c = (this.f36c + 1) % this.logInfos.length;
+            logs[nextIndex].update(type, event, extras);
+            nextIndex = (nextIndex + 1) % logs.length;
             return;
         }
-        this.logInfos[length].mo68a(i, str, f);
-        LogInfo.m83a(this.logInfos[length2]);
+        logs[last].update(type, event, extras);
+        LogInfo.updateDuplicateCount(logs[secondLast]);
     }
 
-    public void print(String str, PrintWriter printWriter) {
-        String str2 = this.tag;
-        printWriter.println(new StringBuilder(String.valueOf(str).length() + 15 + String.valueOf(str2).length()).append(str).append(str2).append(" event history:").toString());
+    public void print(String event, PrintWriter printWriter) {
+        String str2 = tag;
+        printWriter.println(new StringBuilder(String.valueOf(event).length() + 15
+                + String.valueOf(str2).length()).append(event).append(str2).append(" event history:"));
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("  HH:mm:ss.SSSZ  ", Locale.US);
         Date date = new Date();
-        for (int i = 0; i < this.logInfos.length; i++) {
-            LogInfo logInfo = this.logInfos[(((this.f36c + this.logInfos.length) - i) - 1) % this.logInfos.length];
+        for (int i = 0; i < logs.length; i++) {
+            LogInfo logInfo = logs[(((nextIndex + logs.length) - i) - 1) % logs.length];
             if (logInfo != null) {
-                date.setTime(logInfo.f40d);
-                StringBuilder append = new StringBuilder(str).append(simpleDateFormat.format(date)).append(logInfo.f38b);
-                switch (logInfo.f37a) {
-                    case 1:
-                        append.append(": ").append(logInfo.f39c);
+                date.setTime(logInfo.time);
+                StringBuilder append = new StringBuilder(event).append(simpleDateFormat.format(date)).append(logInfo.event);
+                switch (logInfo.type) {
+                    case TYPE_FLOAT:
+                        append.append(": ").append(logInfo.extras);
                         break;
-                    case 2:
-                        append.append(": ").append((int) logInfo.f39c);
+                    case TYPE_INTEGER:
+                        append.append(": ").append((int) logInfo.extras);
                         break;
-                    case 3:
+                    case TYPE_BOOL_TRUE:
                         append.append(": true");
                         break;
-                    case 4:
+                    case TYPE_BOOL_FALSE:
                         append.append(": false");
                         break;
                 }
-                if (logInfo.f41e > 0) {
-                    append.append(" & ").append(logInfo.f41e).append(" similar events");
+                if (logInfo.duplicateCount > 0) {
+                    append.append(" & ").append(logInfo.duplicateCount).append(" similar events");
                 }
                 printWriter.println(append);
             }
         }
     }
 
-    private static boolean m77a(LogInfo eVar, int i, String str) {
-        return eVar != null && eVar.f37a == i && eVar.f38b.equals(str);
+    private static boolean isEntrySame(LogInfo logInfo, int type, String event) {
+        return logInfo != null && logInfo.type == type && logInfo.event.equals(event);
     }
 }
