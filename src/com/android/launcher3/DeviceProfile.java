@@ -16,15 +16,6 @@
 
 package com.android.launcher3;
 
-import static com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT;
-import static com.android.launcher3.InvariantDeviceProfile.INDEX_LANDSCAPE;
-import static com.android.launcher3.InvariantDeviceProfile.INDEX_TWO_PANEL_LANDSCAPE;
-import static com.android.launcher3.InvariantDeviceProfile.INDEX_TWO_PANEL_PORTRAIT;
-import static com.android.launcher3.ResourceUtils.pxFromDp;
-import static com.android.launcher3.Utilities.dpiFromPx;
-import static com.android.launcher3.Utilities.pxFromSp;
-import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -49,6 +40,15 @@ import com.android.launcher3.util.WindowBounds;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT;
+import static com.android.launcher3.InvariantDeviceProfile.INDEX_LANDSCAPE;
+import static com.android.launcher3.InvariantDeviceProfile.INDEX_TWO_PANEL_LANDSCAPE;
+import static com.android.launcher3.InvariantDeviceProfile.INDEX_TWO_PANEL_PORTRAIT;
+import static com.android.launcher3.ResourceUtils.pxFromDp;
+import static com.android.launcher3.Utilities.dpiFromPx;
+import static com.android.launcher3.Utilities.pxFromSp;
+import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR;
+
 @SuppressLint("NewApi")
 public class DeviceProfile {
 
@@ -60,7 +60,7 @@ public class DeviceProfile {
     private final Info mInfo;
     private final DisplayMetrics mMetrics;
 
-    // Device properties
+    // Device properties，小于600dp
     public final boolean isTablet;
     public final boolean isPhone;
     public final boolean transposeLayoutWithOrientation;
@@ -70,6 +70,7 @@ public class DeviceProfile {
     // Device properties in current orientation
     public final boolean isLandscape;
     public final boolean isMultiWindowMode;
+    // 是否是全面屏手势模式
     public final boolean isGestureMode;
 
     public final int windowX;
@@ -230,10 +231,11 @@ public class DeviceProfile {
     public DotRenderer mDotRendererWorkSpace;
     public DotRenderer mDotRendererAllApps;
 
-    // Taskbar
+    // Taskbar，是否显示Taskbar，平板中导航栏加Hotseat
     public boolean isTaskbarPresent;
     // Whether Taskbar will inset the bottom of apps by taskbarSize.
     public boolean isTaskbarPresentInApps;
+    // Taskbar height
     public int taskbarSize;
     public int stashedTaskbarSize;
 
@@ -258,7 +260,8 @@ public class DeviceProfile {
         isScalableGrid = inv.isScalable && !isVerticalBarLayout() && !isMultiWindowMode;
         // Determine device posture.
         mInfo = info;
-        isTablet = info.isTablet(windowBounds);
+//        isTablet = info.isTablet(windowBounds);
+        isTablet = true;
         isPhone = !isTablet;
         isTwoPanels = isTablet && useTwoPanels;
         isTaskbarPresent = isTablet && ApiWrapper.TASKBAR_DRAWN_IN_PROCESS;

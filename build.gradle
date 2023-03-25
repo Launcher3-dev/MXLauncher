@@ -2,6 +2,7 @@ buildscript {
     repositories {
         mavenCentral()
         google()
+        gradlePluginPortal()
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -170,6 +171,7 @@ allprojects {
     repositories {
         mavenCentral()
         google()
+        gradlePluginPortal()
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/central' }
@@ -216,8 +218,12 @@ dependencies {
 protobuf {
     // Configure the protoc executable
     protoc {
-//        artifact = "com.google.protobuf:protoc:${protocVersion}${PROTO_ARCH_SUFFIX}"
-        artifact = "com.google.protobuf:protoc:${protocVersion}"
+        if (osdetector.os == "osx") {
+            artifact = "com.google.protobuf:protoc:${protocVersion}:osx-x86_64"
+        } else {
+            //        artifact = "com.google.protobuf:protoc:${protocVersion}${PROTO_ARCH_SUFFIX}"
+            artifact = "com.google.protobuf:protoc:${protocVersion}"
+        }
     }
     generateProtoTasks {
         all().each { task ->
@@ -232,7 +238,7 @@ protobuf {
 }
 
 
-task upgradeVersion {
+tasks.register('upgradeVersion') {
     group 'help'
     description '构建新版本'
     doLast {

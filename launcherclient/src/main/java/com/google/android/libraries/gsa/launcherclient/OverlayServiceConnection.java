@@ -14,6 +14,9 @@ class OverlayServiceConnection implements ServiceConnection {
 
     public static final String TAG = "LauncherClient.OverlayServiceConnection";
 
+    private static final int STATUS_DISCONNECT = 0;
+    private static final int STATUS_CONNECT = 1;
+
     private final Context mContext;
 
     private final int flags;
@@ -43,6 +46,10 @@ class OverlayServiceConnection implements ServiceConnection {
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         Log.d(TAG, "onServiceDisconnected: " + componentName);
+        LauncherClient client = getLauncherClient();
+        if (client != null) {
+            client.onServiceStateChanged(STATUS_DISCONNECT, false);
+        }
     }
 
     public final void unbindService() {
@@ -100,6 +107,7 @@ class OverlayServiceConnection implements ServiceConnection {
         LauncherClient client = getLauncherClient();
         if (client != null) {
             client.setLauncherOverlay(overlay);
+            client.onServiceStateChanged(STATUS_CONNECT, true);
         }
     }
 
