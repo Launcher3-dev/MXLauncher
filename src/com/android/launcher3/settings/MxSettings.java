@@ -1,8 +1,9 @@
 package com.android.launcher3.settings;
 
-import android.util.Log;
+import android.content.Context;
 
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.util.LauncherSpUtil;
 
@@ -20,6 +21,7 @@ public final class MxSettings {
     private boolean isDrawerEnable = FeatureFlags.LAUNCHER3_ENABLE_DRAWER;
 
     private Launcher mLauncher;
+    private Context mContext;
 
     private static class SettingHolder {
         private static final MxSettings MX_SETTINGS = new MxSettings();
@@ -31,17 +33,19 @@ public final class MxSettings {
 
     public void loadSettings(Launcher launcher) {
         mLauncher = launcher;
+        mContext = launcher.getApplicationContext();
         init();
     }
 
     private void init() {
-        isPagedViewCircleScroll = LauncherSpUtil.getBooleanData(mLauncher, LauncherSpUtil.KEY_PAGE_CIRCLE);
-        isDrawerEnable = LauncherSpUtil.getBooleanDataWithDefault(mLauncher, LauncherSpUtil.PREF_DRAWER_ENABLE, FeatureFlags.LAUNCHER3_ENABLE_DRAWER);
+        isPagedViewCircleScroll = LauncherSpUtil.getBooleanData(mContext, LauncherSpUtil.KEY_PAGE_CIRCLE);
+        isDrawerEnable = LauncherSpUtil.getBooleanDataWithDefault(mContext, LauncherSpUtil.PREF_DRAWER_ENABLE, FeatureFlags.LAUNCHER3_ENABLE_DRAWER);
+        LauncherSettings.Favorites.updateTableName(isDrawerEnable);
     }
 
     public void setPagedViewCircleScroll(boolean isPagedViewCircleScroll) {
         this.isPagedViewCircleScroll = isPagedViewCircleScroll;
-        LauncherSpUtil.saveBooleanData(mLauncher, LauncherSpUtil.KEY_PAGE_CIRCLE, isPagedViewCircleScroll);
+        LauncherSpUtil.saveBooleanData(mContext, LauncherSpUtil.KEY_PAGE_CIRCLE, isPagedViewCircleScroll);
     }
 
     public boolean isPageViewCircleScroll() {
@@ -55,8 +59,15 @@ public final class MxSettings {
 
     public void setDrawerEnable(boolean drawerEnable) {
         isDrawerEnable = drawerEnable;
-        LauncherSpUtil.saveBooleanData(mLauncher, LauncherSpUtil.PREF_DRAWER_ENABLE, drawerEnable);
-        mLauncher.getModel().forceReload();
+        LauncherSettings.Favorites.updateTableName(drawerEnable);
+        LauncherSpUtil.saveBooleanData(mContext, LauncherSpUtil.PREF_DRAWER_ENABLE, drawerEnable);
+        if (mLauncher != null) {
+            mLauncher.getModel().forceReload();
+        }
+    }
+
+    public void onDestroy() {
+        mLauncher = null;
     }
 
 }

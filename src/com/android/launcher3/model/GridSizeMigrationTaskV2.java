@@ -16,6 +16,8 @@
 
 package com.android.launcher3.model;
 
+import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
+
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -54,8 +56,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import static com.android.launcher3.provider.LauncherDbUtils.dropTable;
 
 /**
  * This class takes care of shrinking the workspace (by maximum of one row and one column), as a
@@ -176,12 +176,12 @@ public class GridSizeMigrationTaskV2 {
                 LauncherSettings.Settings.EXTRA_VALUE)) {
 
             DbReader srcReader = new DbReader(t.getDb(),
-                    migrateForPreview ? LauncherSettings.Favorites.getFavoritesTableName()
+                    migrateForPreview ? LauncherSettings.Favorites.TABLE_NAME
                             : LauncherSettings.Favorites.TMP_TABLE,
                     context, validPackages);
             DbReader destReader = new DbReader(t.getDb(),
                     migrateForPreview ? LauncherSettings.Favorites.PREVIEW_TABLE_NAME
-                            : LauncherSettings.Favorites.getFavoritesTableName(),
+                            : LauncherSettings.Favorites.TABLE_NAME,
                     context, validPackages);
 
             Point targetSize = new Point(destDeviceState.getColumns(), destDeviceState.getRows());

@@ -131,11 +131,13 @@ public class LauncherSettings {
          */
         public static final String ICON = "icon";
 
-        private static final String TABLE_NAME = "favorites";
-        private static final String TABLE_NAME_ALL = "favorites_all";
+        private static final String TABLE_NAME_WITH_DRAWER = "favorites";
+        private static final String TABLE_NAME_NO_DRAWER = "favorites_all";
 
-        public static String getFavoritesTableName() {
-            return MxSettings.getInstance().isDrawerEnable() ? TABLE_NAME : TABLE_NAME_ALL;
+        public static String TABLE_NAME = TABLE_NAME_WITH_DRAWER;
+
+        public static void updateTableName(boolean isDrawer) {
+            TABLE_NAME = isDrawer ? TABLE_NAME_WITH_DRAWER : TABLE_NAME_NO_DRAWER;
         }
 
         /**
@@ -173,7 +175,7 @@ public class LauncherSettings {
                 + LauncherProvider.AUTHORITY + "/" + TABLE_NAME);
 
         private static final Uri CONTENT_URI_ALL = Uri.parse("content://"
-                + LauncherProvider.AUTHORITY + "/" + TABLE_NAME_ALL);
+                + LauncherProvider.AUTHORITY + "/" + TABLE_NAME_NO_DRAWER);
 
         /**
          * The content:// style URL for "favorites_bakup" table
@@ -214,7 +216,7 @@ public class LauncherSettings {
          */
         public static Uri getContentUri(int id) {
             return Uri.parse("content://" + LauncherProvider.AUTHORITY
-                    + "/" + (MxSettings.getInstance().isDrawerEnable() ? TABLE_NAME : TABLE_NAME_ALL) + "/" + id);
+                    + "/" + TABLE_NAME + "/" + id);
         }
 
         /**
@@ -355,7 +357,7 @@ public class LauncherSettings {
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional) {
             addTableToDb(db, myProfileId, optional, TABLE_NAME);
-            addTableToDb(db, myProfileId, optional, TABLE_NAME_ALL);
+            addTableToDb(db, myProfileId, optional, TABLE_NAME_NO_DRAWER);
         }
 
         public static void addTableToDb(SQLiteDatabase db, long myProfileId, boolean optional,

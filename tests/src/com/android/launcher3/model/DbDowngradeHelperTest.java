@@ -127,7 +127,7 @@ public class DbDowngradeHelperTest {
         assertEquals(22, helper.getWritableDatabase().getVersion());
 
         // Check column does not exist
-        try (Cursor c = helper.getWritableDatabase().query(Favorites.getFavoritesTableName(),
+        try (Cursor c = helper.getWritableDatabase().query(Favorites.TABLE_NAME,
                 null, null, null, null, null, null)) {
             assertEquals(-1, c.getColumnIndex(Favorites.OPTIONS));
 
@@ -142,7 +142,7 @@ public class DbDowngradeHelperTest {
         };
         assertEquals(LauncherProvider.SCHEMA_VERSION, helper.getWritableDatabase().getVersion());
 
-        try (Cursor c = helper.getWritableDatabase().query(Favorites.getFavoritesTableName(),
+        try (Cursor c = helper.getWritableDatabase().query(Favorites.TABLE_NAME,
                 null, null, null, null, null, null)) {
             // Check column exists
             assertNotSame(-1, c.getColumnIndex(Favorites.OPTIONS));
@@ -176,7 +176,7 @@ public class DbDowngradeHelperTest {
             ContentValues values = new ContentValues();
             values.put(Favorites._ID, i);
             values.put(Favorites.TITLE, "title " + i);
-            dbHelper.getWritableDatabase().insert(Favorites.getFavoritesTableName(), null, values);
+            dbHelper.getWritableDatabase().insert(Favorites.TABLE_NAME, null, values);
         }
         dbHelper.close();
     }

@@ -122,7 +122,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -207,7 +207,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -262,7 +262,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -327,7 +327,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numRows = 5
 
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -387,7 +387,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 5
         idp.numRows = 5
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,
@@ -448,7 +448,7 @@ class GridSizeMigrationTaskV2Test {
         idp.numColumns = 4
         idp.numRows = 4
         val srcReader = DbReader(db, TMP_TABLE, context, validPackages)
-        val destReader = DbReader(db, getFavoritesTableName(), context, validPackages)
+        val destReader = DbReader(db, TABLE_NAME, context, validPackages)
         val task = GridSizeMigrationTaskV2(
             context,
             db,

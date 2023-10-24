@@ -88,7 +88,7 @@ public class GridBackupTable {
     public void createCustomBackupTable(String tableName) {
         long profileId = UserCache.INSTANCE.get(mContext).getSerialNumberForUser(
                 Process.myUserHandle());
-        copyTable(mDb, Favorites.getFavoritesTableName(), tableName, profileId);
+        copyTable(mDb, Favorites.TABLE_NAME, tableName, profileId);
         encodeDBProperties(0);
     }
 
@@ -103,7 +103,7 @@ public class GridBackupTable {
         }
         long userSerial = UserCache.INSTANCE.get(mContext).getSerialNumberForUser(
                 Process.myUserHandle());
-        copyTable(mDb, tableName, Favorites.getFavoritesTableName(), userSerial);
+        copyTable(mDb, tableName, Favorites.TABLE_NAME, userSerial);
         if (dropAfterUse) {
             dropTable(mDb, tableName);
         }
@@ -167,7 +167,7 @@ public class GridBackupTable {
             // skip restore if dimensions in backup table differs from current setup.
             return false;
         }
-        copyTable(mDb, Favorites.BACKUP_TABLE_NAME, Favorites.getFavoritesTableName(), oldProfileId);
+        copyTable(mDb, Favorites.BACKUP_TABLE_NAME, Favorites.TABLE_NAME, oldProfileId);
         Log.d(TAG, "Backup restored");
         return true;
     }
@@ -176,7 +176,7 @@ public class GridBackupTable {
      * Performs a backup on the workspace layout.
      */
     public void doBackup(long profileId, int options) {
-        copyTable(mDb, Favorites.getFavoritesTableName(), Favorites.BACKUP_TABLE_NAME, profileId);
+        copyTable(mDb, Favorites.TABLE_NAME, Favorites.BACKUP_TABLE_NAME, profileId);
         encodeDBProperties(options);
     }
 

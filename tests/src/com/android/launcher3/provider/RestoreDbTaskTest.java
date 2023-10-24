@@ -53,7 +53,7 @@ public class RestoreDbTaskTest {
             ContentValues values = new ContentValues();
             values.put(Favorites._ID, i);
             values.put(Favorites.TITLE, "item " + i);
-            db.insert(Favorites.getFavoritesTableName(), null, values);
+            db.insert(Favorites.TABLE_NAME, null, values);
         }
         // Verify item add
         assertEquals(5, getCount(db, "select * from favorites where profileId = 42"));
@@ -73,7 +73,7 @@ public class RestoreDbTaskTest {
             ContentValues values = new ContentValues();
             values.put(Favorites._ID, i);
             values.put(Favorites.TITLE, "item " + i);
-            db.insert(Favorites.getFavoritesTableName(), null, values);
+            db.insert(Favorites.TABLE_NAME, null, values);
         }
         // Verify default column is 42
         assertEquals(5, getCount(db, "select * from favorites where profileId = 42"));
@@ -84,7 +84,7 @@ public class RestoreDbTaskTest {
         ContentValues values = new ContentValues();
         values.put(Favorites._ID, 100);
         values.put(Favorites.TITLE, "item 100");
-        db.insert(Favorites.getFavoritesTableName(), null, values);
+        db.insert(Favorites.TABLE_NAME, null, values);
         assertEquals(1, getCount(db, "select * from favorites where profileId = 33"));
     }
 
@@ -117,7 +117,7 @@ public class RestoreDbTaskTest {
             values.put(Favorites._ID, i);
             values.put(Favorites.SCREEN, screenIds[i]);
             values.put(Favorites.CONTAINER, Favorites.CONTAINER_DESKTOP);
-            db.insert(Favorites.getFavoritesTableName(), null, values);
+            db.insert(Favorites.TABLE_NAME, null, values);
         }
         // Verify items are added
         assertEquals(screenIds.length,

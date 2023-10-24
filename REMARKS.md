@@ -32,14 +32,14 @@ dw_tablet_hotseat.xml
 
 导致hotseat中的应用信息一直加载失败，后来跟踪Launcher代码知道，在
 
-```
+```java
 AutoInstallsLayout.getAttributeValue(XmlResourceParser parser, String attribute)
 AutoInstallsLayout.getAttributeResourceValue(XmlResourceParser parser, String attribute, int defaultValue)
 ```
 
 两个方法中用到了命名空间
 
-```
+```java
 parser.getAttributeValue("http://schemas.android.com/apk/res-auto/com.android.launcher3", attribute);
 
 parser.getAttributeResourceValue("http://schemas.android.com/apk/res-auto/com.android.launcher3", attribute, defaultValue);

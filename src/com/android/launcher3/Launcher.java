@@ -1725,6 +1725,7 @@ public class Launcher extends StatefulActivity<LauncherState>
 
         mOverlayManager.onActivityDestroyed(this);
         mUserChangedCallbackCloseable.close();
+        MxSettings.getInstance().onDestroy();
     }
 
     public LauncherAccessibilityDelegate getAccessibilityDelegate() {

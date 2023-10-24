@@ -142,9 +142,9 @@ public class BackupRestoreTest {
     public void testOnRestoreSessionWithValidCondition_PerformsRestore() throws Exception {
         setupBackup();
         verifyTableIsFilled(BACKUP_TABLE_NAME, false);
-        verifyTableIsEmpty(LauncherSettings.Favorites.getFavoritesTableName());
+        verifyTableIsEmpty(LauncherSettings.Favorites.TABLE_NAME);
         createRestoreSession();
-        verifyTableIsFilled(LauncherSettings.Favorites.getFavoritesTableName(), true);
+        verifyTableIsFilled(LauncherSettings.Favorites.TABLE_NAME, true);
     }
 
     private void setupBackup() {
@@ -185,7 +185,7 @@ public class BackupRestoreTest {
 
     private void createTableUsingOldProfileId() {
         // simulates the creation of favorites table on old device
-        dropTable(mDb, LauncherSettings.Favorites.getFavoritesTableName());
+        dropTable(mDb, LauncherSettings.Favorites.TABLE_NAME);
         addTableToDb(mDb, mOldMyProfileId, false);
     }
 
