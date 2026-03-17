@@ -39,6 +39,8 @@
         android:restoreAnyVersion="true"
         android:supportsRtl="true" >
 
+        <profileable android:shell="true" />
+
         <!--
         Main launcher activity. When extending only change the name, and keep all the
         attributes and intent filters the same
